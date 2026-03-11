@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "n8n-mcp": {
+      "command": "node",
+      "args": [
+        "c:/Users/albia/OneDrive/Escritorio/inteligencia/PROGRAMADOR N8N VSCODE/czlonkowski-n8n-mcp/dist/mcp/index.js"
+      ],
+      "env": {
+        "N8N_API_URL": "http://187.124.162.249:5678",
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDM5NjI4Ni02YzVhLTQ5YzMtOTQ1YS1lYWM5NzY1ZTIxZjciLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiMjk4ODA3ZjYtMmIzZi00MWE0LTljNTctN2M0NjdiZTExOWM5IiwiaWF0IjoxNzczMjMzODQ5fQ.16IFkBnSEtkTNHX1YNcEXxJyuajzZROW-m63NYytJuY"
+      }
+    },
+    "n8n-mcp-server": {
+      "command": "node",
+      "args": [
+        "c:/Users/albia/OneDrive/Escritorio/inteligencia/PROGRAMADOR N8N VSCODE/n8n-mcp-server/build/index.js"
+      ],
+      "env": {
+        "N8N_API_URL": "http://187.124.162.249:5678",
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDM5NjI4Ni02YzVhLTQ5YzMtOTQ1YS1lYWM5NzY1ZTIxZjciLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiMjk4ODA3ZjYtMmIzZi00MWE0LTljNTctN2M0NjdiZTExOWM5IiwiaWF0IjoxNzczMjMzODQ5fQ.16IFkBnSEtkTNHX1YNcEXxJyuajzZROW-m63NYytJuY"
+      }
+    }
+  }
+}
