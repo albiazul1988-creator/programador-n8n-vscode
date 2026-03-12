@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cruz Digital - Automatización e IA para tu negocio</title>
+  <meta name="description" content="Automatiza tu negocio con Inteligencia Artificial. Agentes IA, N8N, bots para redes sociales, captación de leads y más." />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --dark: #0f172a;
+      --dark2: #1e293b;
+      --dark3: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(15,23,42,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--text); }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      background: radial-gradient(ellipse at top, rgba(14,165,233,0.15) 0%, transparent 70%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%);
+      top: 10%; left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(14,165,233,0.12);
+      border: 1px solid rgba(14,165,233,0.3);
+      color: var(--accent);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--accent), #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 0.9rem 2.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: inline-block;
+      box-shadow: 0 0 30px rgba(14,165,233,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      box-shadow: 0 0 40px rgba(14,165,233,0.5);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      padding: 0.9rem 2.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-left: 1rem;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* STATS */
+    .stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .stat { text-align: center; }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* SECTION */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    /* SERVICES GRID */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: all 0.3s;
+    }
+    .card:hover {
+      border-color: rgba(14,165,233,0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* HOW IT WORKS */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2rem;
+      counter-reset: step;
+    }
+    .step {
+      position: relative;
+      padding-left: 1rem;
+    }
+    .step-num {
+      font-size: 3rem;
+      font-weight: 800;
+      color: rgba(14,165,233,0.15);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .step p { color: var(--text-muted); font-size: 0.88rem; }
+
+    /* ABOUT */
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    @media (max-width: 700px) {
+      .about-inner { grid-template-columns: 1fr; }
+    }
+    .about-avatar {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #818cf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+    .about-text h2 { margin-bottom: 1rem; }
+    .about-text p { color: var(--text-muted); margin-bottom: 1rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+    .tag {
+      background: rgba(14,165,233,0.1);
+      border: 1px solid rgba(14,165,233,0.2);
+      color: var(--accent);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(129,140,248,0.1));
+      border: 1px solid rgba(14,165,233,0.2);
+      border-radius: 20px;
+      padding: 4rem 2rem;
+      text-align: center;
+      margin: 0 2rem 5rem;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Cruz<span>Digital</span></div>
+    <a href="mailto:juancruz@cruzdigital.com">juancruz@cruzdigital.com</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="badge">⚡ Automatización e IA para negocios</div>
+    <h1>Tu negocio en<br /><span>piloto automático</span></h1>
+    <p>Ahorra horas cada semana automatizando tareas repetitivas con Inteligencia Artificial. Más tiempo para lo que realmente importa.</p>
+    <div>
+      <a href="mailto:juancruz@cruzdigital.com?subject=Quiero%20automatizar%20mi%20negocio" class="btn-primary">Hablemos →</a>
+      <a href="#servicios" class="btn-secondary">Ver servicios</a>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">20+</div>
+        <div class="stat-label">Horas ahorradas/semana</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Automatizado</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Tu negocio trabajando</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICIOS -->
+  <section id="servicios">
+    <p class="section-label">Servicios</p>
+    <h2 class="section-title">Todo lo que puedo automatizar para ti</h2>
+    <p class="section-sub">Desde captar clientes hasta publicar contenido, cada proceso de tu negocio puede funcionar solo.</p>
+    <div class="services-grid">
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>Agentes con IA</h3>
+        <p>Chatbots y asistentes que responden, gestionan y atienden a tus clientes las 24h sin que toques nada.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h3>Automatización con N8N</h3>
+        <p>Conecta tus apps y crea flujos que trabajan solos: emails, facturas, notificaciones, CRM y mucho más.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>Captación de leads</h3>
+        <p>Sistema automático que busca clientes potenciales, extrae sus datos y los guarda listos para contactar.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📧</div>
+        <h3>Email marketing automático</h3>
+        <p>Campañas de prospección en frío personalizadas con IA que se envían solas a cientos de contactos.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>Bots para redes sociales</h3>
+        <p>Publica contenido automáticamente en Instagram, Facebook, LinkedIn y más desde una sola fuente.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎬</div>
+        <h3>Videos virales con IA</h3>
+        <p>Genera y publica vídeos cortos con IA de forma automática para crecer en redes sin esfuerzo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section>
+    <p class="section-label">Proceso</p>
+    <h2 class="section-title">Así de sencillo es empezar</h2>
+    <p class="section-sub">En pocos días tu negocio ya estará funcionando en automático.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Hablamos</h3>
+        <p>Me cuentas qué tareas te quitan más tiempo o cuáles haces de forma manual.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Diseño la solución</h3>
+        <p>Creo el flujo automatizado adaptado exactamente a tu negocio y tus herramientas.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Lo activo</h3>
+        <p>Pongo en marcha todo el sistema. Tú solo lo ves funcionar.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Seguimiento</h3>
+        <p>Te acompaño y ajusto lo que sea necesario para que funcione siempre.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE MÍ -->
+  <section id="sobre-mi">
+    <div class="about-inner">
+      <div>
+        <div class="about-avatar">JC</div>
+        <p class="section-label">Sobre mí</p>
+        <h2 class="section-title">Juan Cruz Bogliotti</h2>
+      </div>
+      <div class="about-text">
+        <p>Especialista en automatización e Inteligencia Artificial aplicada a negocios reales. Ayudo a empresas a dejar de perder tiempo en tareas manuales y a crecer sin necesidad de contratar más personal.</p>
+        <p>Trabajo con las mejores herramientas del mercado para crear sistemas que funcionan solos, adaptados al 100% a cada negocio.</p>
+        <div class="tags">
+          <span class="tag">N8N</span>
+          <span class="tag">OpenAI</span>
+          <span class="tag">Automatización</span>
+          <span class="tag">Agentes IA</span>
+          <span class="tag">Redes Sociales</span>
+          <span class="tag">Lead Generation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <div class="cta-section">
+    <h2>¿Listo para automatizar tu negocio?</h2>
+    <p>Escríbeme y en 24h te digo exactamente qué podemos automatizar en tu caso.</p>
+    <a href="mailto:juancruz@cruzdigital.com?subject=Quiero%20automatizar%20mi%20negocio" class="btn-primary">
+      Contáctame ahora →
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Cruz Digital · <a href="mailto:juancruz@cruzdigital.com">juancruz@cruzdigital.com</a></p>
+  </footer>
+
+</body>
+</html>
