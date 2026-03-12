@@ -186,6 +186,44 @@
       margin-bottom: 3rem;
     }
 
+    /* METODOLOGÍA */
+    .metodo-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .metodo-card {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .metodo-card:hover {
+      border-color: rgba(14,165,233,0.3);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .metodo-num {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      opacity: 0.4;
+      min-width: 60px;
+      line-height: 1;
+    }
+    .metodo-body h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .metodo-body p { color: var(--text-muted); font-size: 0.95rem; }
+    @media (max-width: 500px) {
+      .metodo-card { flex-direction: column; gap: 0.5rem; }
+    }
+
     /* SERVICES GRID */
     .services-grid {
       display: grid;
@@ -340,6 +378,39 @@
       </div>
     </div>
   </div>
+
+  <!-- METODOLOGÍA -->
+  <section id="metodologia">
+    <p class="section-label">Cómo trabajamos</p>
+    <h2 class="section-title">Visita gratuita + informe en 48h</h2>
+    <p class="section-sub">Antes de hablar de tecnología, entendemos tu negocio. En persona.</p>
+    <div class="metodo-grid">
+      <div class="metodo-card">
+        <div class="metodo-num">01</div>
+        <div class="metodo-body">
+          <h3>Te visitamos</h3>
+          <p>Nos reunimos contigo en tu negocio. Analizamos en detalle todos tus procesos, tareas repetitivas y puntos de dolor. Sin coste, sin compromiso.</p>
+        </div>
+      </div>
+      <div class="metodo-card">
+        <div class="metodo-num">02</div>
+        <div class="metodo-body">
+          <h3>Informe personalizado en 48h</h3>
+          <p>En menos de 48 horas recibes un informe completo con: qué podemos automatizar en tu negocio, qué problemas resolvemos y una estimación real de ahorro de tiempo y mejora de ingresos.</p>
+        </div>
+      </div>
+      <div class="metodo-card">
+        <div class="metodo-num">03</div>
+        <div class="metodo-body">
+          <h3>Propuesta clara sin sorpresas</h3>
+          <p>El informe incluye el precio de la implementación y el coste mensual posterior. Tú decides si seguimos adelante. Sin letra pequeña.</p>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top: 3rem;">
+      <a href="mailto:albiazul1988@gmail.com?subject=Quiero%20la%20visita%20gratuita" class="btn-primary">Solicitar visita gratuita →</a>
+    </div>
+  </section>
 
   <!-- SERVICIOS -->
   <section id="servicios">
