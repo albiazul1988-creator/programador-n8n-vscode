@@ -1,0 +1,211 @@
+{
+  "name": "Prospección - Negocios Sin Web - Choclana de la Frontera",
+  "versionId": "d8b028cb-8c33-4223-ae84-ef30b84dfc60",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node_trigger",
+      "name": "Inicio Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "cfg_1", "name": "google_api_key", "value": "AIzaSyBGkTZsuUVgKJRzuaCkRAVO65DdriEYilw", "type": "string" },
+            { "id": "cfg_2", "name": "ciudad", "value": "Choclana de la Frontera Cádiz España", "type": "string" },
+            { "id": "cfg_3", "name": "categorias_csv", "value": "restaurante,bar,cafeteria,tienda ropa,farmacia,peluqueria,taller mecanico,fontanero,electricista,dentista,abogado,ferreteria,panaderia,carniceria,hotel,supermercado,inmobiliaria,gestoria,academia", "type": "string" }
+          ]
+        }
+      },
+      "id": "node_config",
+      "name": "Configuración",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const config = $input.first().json;\nconst categorias = config.categorias_csv.split(',');\nconst ciudad = config.ciudad;\nreturn categorias.map(cat => ({\n  json: {\n    query: cat.trim() + ' en ' + ciudad,\n    api_key: config.google_api_key,\n    categoria: cat.trim()\n  }\n}));",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "node_gen_queries",
+      "name": "Generar Búsquedas por Categoría",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/place/textsearch/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "query", "value": "={{ $json.query }}" },
+            { "name": "key", "value": "={{ $json.api_key }}" },
+            { "name": "language", "value": "es" }
+          ]
+        },
+        "options": {
+          "batching": { "batch": { "batchSize": 3, "batchInterval": 500 } }
+        }
+      },
+      "id": "node_text_search",
+      "name": "Buscar Negocios en Google Maps",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nconst config = $('Configuración').first().json;\nconst api_key = config.google_api_key;\nconst seen = new Set();\nconst places = [];\nfor (const item of allItems) {\n  const results = item.json.results || [];\n  for (const place of results) {\n    if (!seen.has(place.place_id)) {\n      seen.add(place.place_id);\n      places.push({\n        json: {\n          place_id: place.place_id,\n          nombre_maps: place.name,\n          rating: place.rating || 0,\n          api_key: api_key\n        }\n      });\n    }\n  }\n}\nconsole.log('Total negocios únicos: ' + places.length);\nreturn places;",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "node_extract",
+      "name": "Extraer y Deduplicar Negocios",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/place/details/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "place_id", "value": "={{ $json.place_id }}" },
+            { "name": "fields", "value": "name,formatted_phone_number,formatted_address,website,rating,url,types" },
+            { "name": "key", "value": "={{ $json.api_key }}" },
+            { "name": "language", "value": "es" }
+          ]
+        },
+        "options": {
+          "batching": { "batch": { "batchSize": 5, "batchInterval": 500 } }
+        }
+      },
+      "id": "node_details",
+      "name": "Obtener Detalles del Negocio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "cond_no_web",
+              "leftValue": "={{ $json.result?.website }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "empty", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node_filter",
+      "name": "¿Sin Página Web?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "p1", "name": "Negocio", "value": "={{ $json.result?.name || '' }}", "type": "string" },
+            { "id": "p2", "name": "Telefono", "value": "={{ $json.result?.formatted_phone_number || 'Sin telefono' }}", "type": "string" },
+            { "id": "p3", "name": "Direccion", "value": "={{ $json.result?.formatted_address || '' }}", "type": "string" },
+            { "id": "p4", "name": "Google Maps", "value": "={{ $json.result?.url || '' }}", "type": "string" },
+            { "id": "p5", "name": "Rating", "value": "={{ $json.result?.rating || 0 }}", "type": "number" },
+            { "id": "p6", "name": "Tipo", "value": "={{ ($json.result?.types || []).filter(t => !['point_of_interest','establishment','food'].includes(t)).slice(0,2).join(', ') }}", "type": "string" },
+            { "id": "p7", "name": "Tiene Web", "value": "NO", "type": "string" },
+            { "id": "p8", "name": "Fecha", "value": "={{ $now.format('dd/MM/yyyy') }}", "type": "string" },
+            { "id": "p9", "name": "Estado", "value": "Pendiente", "type": "string" }
+          ]
+        }
+      },
+      "id": "node_format",
+      "name": "Formatear Prospecto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1780, 180]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1PlEjCkAX6_fW8CxRuSac6oLi4E5wju_T24Yw1j8O75o",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Prospectos",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {}
+        },
+        "options": {}
+      },
+      "id": "node_sheets",
+      "name": "Guardar en Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2000, 180],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cslbWyeFCpb8UwYb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "prospectos",
+        "options": {}
+      },
+      "id": "node_aggregate",
+      "name": "Juntar Todos los Prospectos",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [2220, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst prospectos = data.prospectos || [];\nprospectos.sort((a, b) => (b.rating || 0) - (a.rating || 0));\nconsole.log('======================================');\nconsole.log('  PROSPECCIÓN COMPLETADA');\nconsole.log('======================================');\nconsole.log('Ciudad: Choclana de la Frontera');\nconsole.log('Negocios sin web encontrados: ' + prospectos.length);\nconsole.log('--------------------------------------');\nprospectos.forEach((p, i) => {\n  console.log((i+1) + '. ' + p.negocio);\n  console.log('   Tel: ' + p.telefono);\n  console.log('   Rating: ' + p.rating + ' estrellas');\n  console.log('');\n});\nreturn [{\n  json: {\n    resumen: {\n      ciudad: 'Choclana de la Frontera',\n      fecha: new Date().toLocaleDateString('es-ES'),\n      total_prospectos: prospectos.length,\n      mensaje: 'Se encontraron ' + prospectos.length + ' negocios sin web. Guardados en Google Sheets.'\n    },\n    prospectos: prospectos\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "node_summary",
+      "name": "Resumen Final de Prospectos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 180]
+    }
+  ],
+  "connections": {
+    "Inicio Manual": { "main": [[{ "node": "Configuración", "type": "main", "index": 0 }]] },
+    "Configuración": { "main": [[{ "node": "Generar Búsquedas por Categoría", "type": "main", "index": 0 }]] },
+    "Generar Búsquedas por Categoría": { "main": [[{ "node": "Buscar Negocios en Google Maps", "type": "main", "index": 0 }]] },
+    "Buscar Negocios en Google Maps": { "main": [[{ "node": "Extraer y Deduplicar Negocios", "type": "main", "index": 0 }]] },
+    "Extraer y Deduplicar Negocios": { "main": [[{ "node": "Obtener Detalles del Negocio", "type": "main", "index": 0 }]] },
+    "Obtener Detalles del Negocio": { "main": [[{ "node": "¿Sin Página Web?", "type": "main", "index": 0 }]] },
+    "¿Sin Página Web?": {
+      "main": [
+        [{ "node": "Formatear Prospecto", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Formatear Prospecto": { "main": [[{ "node": "Guardar en Google Sheets", "type": "main", "index": 0 }]] },
+    "Guardar en Google Sheets": { "main": [[{ "node": "Juntar Todos los Prospectos", "type": "main", "index": 0 }]] },
+    "Juntar Todos los Prospectos": { "main": [[{ "node": "Resumen Final de Prospectos", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}

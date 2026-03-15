@@ -1,0 +1,172 @@
+{
+  "name": "Propuestas IA - Negocios Sin Web",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node_trigger",
+      "name": "Inicio Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1PlEjCkAX6_fW8CxRuSac6oLi4E5wju_T24Yw1j8O75o",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Prospectos",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_read",
+      "name": "Leer Prospectos Pendientes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cslbWyeFCpb8UwYb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"gpt-4o-mini\", \"messages\": [ { \"role\": \"system\", \"content\": \"Eres un experto en ventas de servicios digitales en España. Escribe mensajes de prospección cortos y naturales para WhatsApp. Máximo 5 líneas. Tono cercano, como un vecino de la zona.\" }, { \"role\": \"user\", \"content\": \"Escribe un mensaje de prospección para este negocio:\\nNegocio: \" + $json.Negocio + \"\\nTipo: \" + $json.Tipo + \"\\nDirección: \" + $json.Direccion + \"\\nRating: \" + $json.Rating + \" estrellas\\n\\nSoy Juan de Cruz Visual (servicios digitales, Cádiz).\\nTarifas: web básica 800€, web profesional 1500€, tienda online desde 800€, SEO local 350€/mes, redes sociales 400€/mes.\\nInstrucciones: preséntate, menciona que no tienen web, recomienda el servicio más adecuado con su precio, termina con llamada a la acción. Máximo 5 líneas.\" } ] }) }}",
+        "options": {}
+      },
+      "id": "node_openai",
+      "name": "Generar Propuesta con IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "r1", "name": "Negocio", "value": "={{ $('Leer Prospectos Pendientes').item.json.Negocio }}", "type": "string" },
+            { "id": "r2", "name": "Telefono", "value": "={{ $('Leer Prospectos Pendientes').item.json.Telefono }}", "type": "string" },
+            { "id": "r3", "name": "Propuesta", "value": "={{ $json.choices[0].message.content }}", "type": "string" }
+          ]
+        }
+      },
+      "id": "node_merge",
+      "name": "Combinar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://waha.cruzn8n.com/api/sendText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Api-Key", "value": "e17750b41d694bd788f1e40bbc5b1363" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "session", "value": "default" },
+            { "name": "chatId", "value": "={{ ($json.Telefono.replace(/[^0-9]/g, '').startsWith('34') ? $json.Telefono.replace(/[^0-9]/g, '') : '34' + $json.Telefono.replace(/[^0-9]/g, '')) + '@c.us' }}" },
+            { "name": "text", "value": "={{ $json.Propuesta }}" }
+          ]
+        },
+        "options": {
+          "batching": { "batch": { "batchSize": 1, "batchInterval": 3000 } }
+        }
+      },
+      "id": "node_waha",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1PlEjCkAX6_fW8CxRuSac6oLi4E5wju_T24Yw1j8O75o",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Prospectos",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Propuesta": "={{ $json.Propuesta }}",
+            "Estado": "Enviado"
+          },
+          "matchingColumns": ["Negocio"]
+        },
+        "options": {}
+      },
+      "id": "node_update",
+      "name": "Guardar Propuesta en Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1340, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cslbWyeFCpb8UwYb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconsole.log('PROPUESTAS ENVIADAS: ' + items.length);\nreturn [{ json: { total: items.length, mensaje: items.length + ' propuestas enviadas por WhatsApp' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "node_summary",
+      "name": "Resumen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Inicio Manual": { "main": [[{ "node": "Leer Prospectos Pendientes", "type": "main", "index": 0 }]] },
+    "Leer Prospectos Pendientes": { "main": [[{ "node": "Generar Propuesta con IA", "type": "main", "index": 0 }]] },
+    "Generar Propuesta con IA": { "main": [[{ "node": "Combinar Datos", "type": "main", "index": 0 }]] },
+    "Combinar Datos": { "main": [[{ "node": "Enviar WhatsApp", "type": "main", "index": 0 }]] },
+    "Enviar WhatsApp": { "main": [[{ "node": "Guardar Propuesta en Sheet", "type": "main", "index": 0 }]] },
+    "Guardar Propuesta en Sheet": { "main": [[{ "node": "Resumen", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}
