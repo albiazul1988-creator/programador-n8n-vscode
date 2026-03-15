@@ -1,0 +1,240 @@
+{
+  "name": "MRR-02 Propuestas WhatsApp Multi-Cliente",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mrr-propuestas",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "node_webhook",
+      "name": "Webhook Entrada",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "mrr-propuestas-v1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "cfg_1", "name": "cliente_nombre", "value": "={{ $json.body.cliente_nombre }}", "type": "string" },
+            { "id": "cfg_2", "name": "sheet_id", "value": "={{ $json.body.sheet_id }}", "type": "string" },
+            { "id": "cfg_3", "name": "nombre_remitente", "value": "={{ $json.body.nombre_remitente || 'Juan' }}", "type": "string" },
+            { "id": "cfg_4", "name": "descripcion_servicio", "value": "={{ $json.body.descripcion_servicio || 'captación automática de clientes' }}", "type": "string" },
+            { "id": "cfg_5", "name": "precio_servicio", "value": "={{ $json.body.precio_servicio || '350€/mes' }}", "type": "string" }
+          ]
+        }
+      },
+      "id": "node_config",
+      "name": "Configuración Cliente",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Pendiente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_read",
+      "name": "Leer Prospectos Pendientes",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 300],
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond_hay_leads",
+              "leftValue": "={{ $json.Negocio }}",
+              "rightValue": "",
+              "operator": { "type": "string", "operation": "notEmpty", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node_if_leads",
+      "name": "¿Hay Pendientes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ \"model\": \"gpt-4o-mini\", \"messages\": [ { \"role\": \"system\", \"content\": \"Eres un experto en ventas de servicios digitales en España. Escribe mensajes de prospección cortos y naturales para WhatsApp. Máximo 5 líneas. Tono cercano, como un vecino de la zona. Nunca uses emojis en exceso. Termina siempre con una pregunta que invite a responder.\" }, { \"role\": \"user\", \"content\": \"Escribe un mensaje de WhatsApp para este negocio:\\nNegocio: \" + $json.Negocio + \"\\nTipo: \" + $json.Tipo + \"\\nDirección: \" + $json.Direccion + \"\\nRating Google: \" + $json.Rating + \" estrellas\\n\\nSoy \" + $('Configuración Cliente').first().json.nombre_remitente + \" de Cruz Digital (Cádiz).\\nServicio que ofrezco: \" + $('Configuración Cliente').first().json.descripcion_servicio + \"\\nPrecio: \" + $('Configuración Cliente').first().json.precio_servicio + \"\\n\\nInstrucciones: preséntate brevemente, menciona que no tienen web o presencia digital, ofrece el servicio con precio, termina con pregunta. Máximo 5 líneas.\" } ] }) }}",
+        "options": {}
+      },
+      "id": "node_openai",
+      "name": "Generar Propuesta con IA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "r1", "name": "Negocio", "value": "={{ $('Leer Prospectos Pendientes').item.json.Negocio }}", "type": "string" },
+            { "id": "r2", "name": "Telefono", "value": "={{ $('Leer Prospectos Pendientes').item.json.Telefono }}", "type": "string" },
+            { "id": "r3", "name": "Propuesta", "value": "={{ $json.choices[0].message.content }}", "type": "string" },
+            { "id": "r4", "name": "sheet_id", "value": "={{ $('Configuración Cliente').first().json.sheet_id }}", "type": "string" }
+          ]
+        }
+      },
+      "id": "node_merge",
+      "name": "Combinar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://waha.cruzn8n.com/api/sendText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Api-Key", "value": "e17750b41d694bd788f1e40bbc5b1363" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "session", "value": "default" },
+            { "name": "chatId", "value": "={{ ($json.Telefono.replace(/[^0-9]/g, '').startsWith('34') ? $json.Telefono.replace(/[^0-9]/g, '') : '34' + $json.Telefono.replace(/[^0-9]/g, '')) + '@c.us' }}" },
+            { "name": "text", "value": "={{ $json.Propuesta }}" }
+          ]
+        },
+        "options": {
+          "batching": { "batch": { "batchSize": 1, "batchInterval": 3000 } }
+        }
+      },
+      "id": "node_waha",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Combinar Datos').item.json.sheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Propuesta": "={{ $('Combinar Datos').item.json.Propuesta }}",
+            "Estado": "Enviado",
+            "Fecha Contacto": "={{ $now.format('dd/MM/yyyy') }}"
+          },
+          "matchingColumns": ["Negocio"]
+        },
+        "options": {}
+      },
+      "id": "node_update",
+      "name": "Actualizar Estado en Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1780, 200],
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconsole.log('PROPUESTAS ENVIADAS para cliente: ' + items.length);\nreturn [{ json: { total_enviadas: items.length, mensaje: items.length + ' propuestas enviadas por WhatsApp' } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "node_summary",
+      "name": "Resumen Envíos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { mensaje: 'No hay prospectos pendientes para este cliente', total_enviadas: 0 } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "id": "node_no_leads",
+      "name": "Sin Pendientes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 420]
+    }
+  ],
+  "connections": {
+    "Webhook Entrada": { "main": [[{ "node": "Configuración Cliente", "type": "main", "index": 0 }]] },
+    "Configuración Cliente": { "main": [[{ "node": "Leer Prospectos Pendientes", "type": "main", "index": 0 }]] },
+    "Leer Prospectos Pendientes": { "main": [[{ "node": "¿Hay Pendientes?", "type": "main", "index": 0 }]] },
+    "¿Hay Pendientes?": {
+      "main": [
+        [{ "node": "Generar Propuesta con IA", "type": "main", "index": 0 }],
+        [{ "node": "Sin Pendientes", "type": "main", "index": 0 }]
+      ]
+    },
+    "Generar Propuesta con IA": { "main": [[{ "node": "Combinar Datos", "type": "main", "index": 0 }]] },
+    "Combinar Datos": { "main": [[{ "node": "Enviar WhatsApp", "type": "main", "index": 0 }]] },
+    "Enviar WhatsApp": { "main": [[{ "node": "Actualizar Estado en Sheet", "type": "main", "index": 0 }]] },
+    "Actualizar Estado en Sheet": { "main": [[{ "node": "Resumen Envíos", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}

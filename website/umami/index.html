@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UMAMI La Barrosa — Gastrobar · Chiclana de la Frontera</title>
+  <meta name="description" content="UMAMI La Barrosa — Gastrobar en la Playa de la Barrosa, Chiclana de la Frontera. Cocina fusión mediterránea, hamburguesas gourmet, gyozas de papada ibérica.">
+  <meta property="og:title" content="UMAMI La Barrosa — Gastrobar Chiclana">
+  <meta property="og:description" content="Sabor sin reglas. Vibes sin límites. Gastrobar en La Barrosa, Chiclana de la Frontera.">
+  <meta property="og:image" content="assets/gallery/foto1.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'u-black': '#080808',
+            'u-dark':  '#111111',
+            'u-surf':  '#1a1a1a',
+            'u-card':  '#222222',
+            'u-line':  '#2a2a2a',
+            'u-gray':  '#5a5a5a',
+            'u-mid':   '#888888',
+            'u-light': '#aaaaaa',
+            'u-sand':  '#c8a97a',
+            'u-cream': '#ece8e1',
+            'u-white': '#f7f5f2',
+          },
+          fontFamily: {
+            bebas:    ['Bebas Neue', 'sans-serif'],
+            playfair: ['Playfair Display', 'serif'],
+            inter:    ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: #080808; color: #f7f5f2; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+    .nav-glass {
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .hero-grad {
+      background: linear-gradient(180deg, rgba(8,8,8,0.2) 0%, rgba(8,8,8,0.45) 45%, rgba(8,8,8,0.88) 80%, rgba(8,8,8,1) 100%);
+    }
+    .hero-grad-left {
+      background: linear-gradient(90deg, rgba(8,8,8,0.65) 0%, rgba(8,8,8,0) 60%);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 36px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    .btn-sand  { border: 1px solid #c8a97a; color: #c8a97a; }
+    .btn-sand:hover { background: #c8a97a; color: #080808; }
+    .btn-white { border: 1px solid rgba(247,245,242,0.25); color: rgba(247,245,242,0.7); }
+    .btn-white:hover { border-color: #f7f5f2; color: #f7f5f2; }
+    .btn-solid { background: #c8a97a; border: 1px solid #c8a97a; color: #080808; }
+    .btn-solid:hover { background: transparent; color: #c8a97a; }
+
+    .label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 4px; text-transform: uppercase; color: #c8a97a;
+    }
+    .h-giant { font-family: 'Bebas Neue', sans-serif; line-height: 0.88; letter-spacing: 1px; }
+    .italic-sub { font-family: 'Playfair Display', serif; font-style: italic; }
+
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .ticker-inner { animation: ticker 32s linear infinite; }
+
+    .reveal {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal-left {
+      opacity: 0; transform: translateX(-30px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.up, .reveal-left.up { opacity: 1; transform: none; }
+
+    .dish-img { transition: transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .dish-card:hover .dish-img { transform: scale(1.07); }
+    .dish-card { transition: box-shadow 0.4s ease; }
+    .dish-card:hover { box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+
+    .gal-img { transition: transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .gal-cell:hover .gal-img { transform: scale(1.06); }
+
+    .mmenu { transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.16,1,0.3,1); }
+    .mmenu.open { transform: translateX(0); }
+
+    .map-wrap { filter: grayscale(1) contrast(1.05); transition: filter 0.5s ease; }
+    .map-wrap:hover { filter: grayscale(0.4); }
+
+    .menu-row { border-bottom: 1px solid #2a2a2a; transition: border-color 0.3s ease; }
+    .menu-row:hover { border-color: rgba(200,169,122,0.3); }
+    .menu-row:hover .menu-name { color: #c8a97a; }
+    .menu-name { transition: color 0.3s ease; }
+
+    @keyframes bounce-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+    .bounce { animation: bounce-y 1.8s ease-in-out infinite; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes zoomIn { from { transform: scale(1.06); } to { transform: scale(1.0); } }
+  </style>
+</head>
+
+<body class="bg-u-black text-u-white font-inter">
+
+<!-- ── NAVBAR ───────────────────────────────── -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 nav-glass border-b border-u-line transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
+
+    <a href="#hero" class="flex items-center gap-3">
+      <img src="assets/logo.png" alt="UMAMI La Barrosa"
+           class="h-9 w-9 object-cover rounded-full"
+           onerror="this.outerHTML='<span class=\'font-bebas text-2xl tracking-widest\'>UMAMI</span>'">
+      <div class="hidden sm:block">
+        <p class="font-bebas text-lg tracking-[4px] leading-none">UMAMI</p>
+        <p class="text-[9px] text-u-sand tracking-[3px] uppercase leading-none mt-0.5">La Barrosa · Cádiz</p>
+      </div>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-7">
+      <li><a href="#nosotros"  class="text-[11px] font-medium tracking-[3px] uppercase text-u-light hover:text-u-cream transition-colors">Nosotros</a></li>
+      <li><a href="#platos"    class="text-[11px] font-medium tracking-[3px] uppercase text-u-light hover:text-u-cream transition-colors">Platos</a></li>
+      <li><a href="#galeria"   class="text-[11px] font-medium tracking-[3px] uppercase text-u-light hover:text-u-cream transition-colors">Galería</a></li>
+      <li><a href="#carta"     class="text-[11px] font-medium tracking-[3px] uppercase text-u-light hover:text-u-cream transition-colors">Carta</a></li>
+      <li><a href="#ubicacion" class="text-[11px] font-medium tracking-[3px] uppercase text-u-light hover:text-u-cream transition-colors">Ubicación</a></li>
+    </ul>
+
+    <div class="flex items-center gap-4">
+      <a href="tel:+34681884155" class="hidden md:block btn btn-sand">Reservar</a>
+      <button onclick="toggleMenu()" class="md:hidden p-1 text-u-light hover:text-u-white transition-colors">
+        <svg id="ico-open"  width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="3" y1="6"  x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <svg id="ico-close" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6"  y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div id="mmenu" class="mmenu fixed inset-y-0 right-0 w-72 bg-u-dark z-50 flex flex-col px-8 pt-20 pb-10">
+  <ul class="flex flex-col gap-6">
+    <li><a href="#nosotros"  onclick="toggleMenu()" class="font-bebas text-4xl tracking-widest text-u-cream block">Nosotros</a></li>
+    <li><a href="#platos"    onclick="toggleMenu()" class="font-bebas text-4xl tracking-widest text-u-cream block">Platos</a></li>
+    <li><a href="#galeria"   onclick="toggleMenu()" class="font-bebas text-4xl tracking-widest text-u-cream block">Galería</a></li>
+    <li><a href="#carta"     onclick="toggleMenu()" class="font-bebas text-4xl tracking-widest text-u-cream block">Carta</a></li>
+    <li><a href="#ubicacion" onclick="toggleMenu()" class="font-bebas text-4xl tracking-widest text-u-cream block">Ubicación</a></li>
+  </ul>
+  <div class="mt-auto">
+    <a href="tel:+34681884155" class="btn btn-solid block w-full mt-8">Reservar Mesa</a>
+    <p class="text-u-gray text-xs text-center mt-3 tracking-widest">681 88 41 55</p>
+  </div>
+</div>
+<div id="overlay" class="fixed inset-0 bg-black/60 z-40 hidden" onclick="toggleMenu()"></div>
+
+
+<!-- ── HERO ─────────────────────────────────── -->
+<section id="hero" class="relative w-full h-screen min-h-[680px] flex items-end">
+  <div class="absolute inset-0 overflow-hidden">
+    <!-- FOTO REAL: exterior noche UMAMI La Barrosa -->
+    <img src="assets/gallery/foto1.jpg"
+         alt="UMAMI La Barrosa - Exterior de noche"
+         class="w-full h-full object-cover object-center"
+         style="animation: zoomIn 12s ease forwards;">
+  </div>
+  <div class="hero-grad absolute inset-0"></div>
+  <div class="hero-grad-left absolute inset-0"></div>
+
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-8 pb-16 md:pb-24">
+    <div class="mb-6" style="opacity:0;animation:fadeUp 0.9s 0.2s ease forwards;">
+      <img src="assets/logo.png" alt="UMAMI"
+           class="h-24 md:h-36 w-auto drop-shadow-2xl"
+           onerror="this.outerHTML='<p class=\'font-bebas text-[100px] md:text-[160px] leading-none tracking-widest\'>UMAMI</p>'">
+    </div>
+    <p class="italic-sub text-2xl md:text-4xl text-u-cream/90 mb-3 max-w-xl"
+       style="opacity:0;animation:fadeUp 0.9s 0.4s ease forwards;">
+      Sabor sin reglas. Vibes sin límites.
+    </p>
+    <p class="text-u-light text-sm md:text-base font-light leading-relaxed max-w-lg"
+       style="opacity:0;animation:fadeUp 0.9s 0.55s ease forwards;">
+      Gastrobar en la primera línea de La Barrosa.<br>
+      Cocina fusión, producto fresco y flow gaditano.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 mt-9"
+         style="opacity:0;animation:fadeUp 0.9s 0.7s ease forwards;">
+      <a href="#carta"              class="btn btn-sand">Ver la Carta</a>
+      <a href="tel:+34681884155"    class="btn btn-white">Reservar · 681 88 41 55</a>
+    </div>
+    <div class="flex items-center gap-2 mt-10"
+         style="opacity:0;animation:fadeUp 0.9s 0.85s ease forwards;">
+      <span class="w-6 h-px bg-u-sand"></span>
+      <p class="text-u-gray text-[10px] tracking-[3px] uppercase">CC Bellamar · Playa de la Barrosa · Chiclana de la Frontera</p>
+    </div>
+  </div>
+
+  <div class="absolute bottom-8 right-8 hidden md:flex flex-col items-center gap-2 bounce">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8a97a" stroke-width="1.5">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ── TICKER ────────────────────────────────── -->
+<div class="bg-u-surf border-y border-u-line py-[14px] overflow-hidden">
+  <div class="ticker-inner flex gap-14 whitespace-nowrap" style="width:max-content;">
+    <div class="flex gap-14 items-center text-[10px] font-semibold tracking-[3px] uppercase text-u-gray">
+      <span>Gyozas de Papada Ibérica</span><span class="text-u-sand text-base">✦</span>
+      <span>Hamburguesas Gourmet</span><span class="text-u-sand text-base">✦</span>
+      <span>Croquetas de Jalapeño</span><span class="text-u-sand text-base">✦</span>
+      <span>Steak Tartar</span><span class="text-u-sand text-base">✦</span>
+      <span>Salmorejo con Mango</span><span class="text-u-sand text-base">✦</span>
+      <span>Cocina Fusión Mediterránea</span><span class="text-u-sand text-base">✦</span>
+      <span>Playa de la Barrosa</span><span class="text-u-sand text-base">✦</span>
+      <span>Chiclana · Cádiz</span><span class="text-u-sand text-base">✦</span>
+      <span>Pet Friendly</span><span class="text-u-sand text-base">✦</span>
+    </div>
+    <div class="flex gap-14 items-center text-[10px] font-semibold tracking-[3px] uppercase text-u-gray" aria-hidden="true">
+      <span>Gyozas de Papada Ibérica</span><span class="text-u-sand text-base">✦</span>
+      <span>Hamburguesas Gourmet</span><span class="text-u-sand text-base">✦</span>
+      <span>Croquetas de Jalapeño</span><span class="text-u-sand text-base">✦</span>
+      <span>Steak Tartar</span><span class="text-u-sand text-base">✦</span>
+      <span>Salmorejo con Mango</span><span class="text-u-sand text-base">✦</span>
+      <span>Cocina Fusión Mediterránea</span><span class="text-u-sand text-base">✦</span>
+      <span>Playa de la Barrosa</span><span class="text-u-sand text-base">✦</span>
+      <span>Chiclana · Cádiz</span><span class="text-u-sand text-base">✦</span>
+      <span>Pet Friendly</span><span class="text-u-sand text-base">✦</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── ABOUT ─────────────────────────────────── -->
+<section id="nosotros" class="py-24 md:py-36">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+
+      <div class="reveal-left relative">
+        <div class="aspect-[3/4] overflow-hidden bg-u-surf">
+          <!-- FOTO REAL: interior del restaurante -->
+          <img src="assets/gallery/foto3.jpg"
+               alt="Interior UMAMI La Barrosa - mesas altas, bombillas industriales"
+               class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
+        </div>
+        <div class="absolute -bottom-5 -right-4 md:-right-8 bg-u-dark border border-u-line p-5 shadow-2xl">
+          <p class="font-bebas text-4xl text-u-sand leading-none">4.5</p>
+          <div class="text-u-sand text-xs mt-1">★★★★★</div>
+          <p class="text-u-gray text-[10px] mt-0.5 tracking-wide">+128 reseñas Google</p>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <p class="label mb-5">Quiénes somos</p>
+        <h2 class="h-giant text-[60px] md:text-[86px] text-u-white">DONDE EL</h2>
+        <h2 class="h-giant text-[60px] md:text-[86px] text-u-sand mb-6">SABOR MANDA</h2>
+        <p class="italic-sub text-xl text-u-cream/80 mb-5">Cocina con alma en el corazón de La Barrosa.</p>
+        <p class="text-u-light text-sm leading-[1.9] mb-4">
+          UMAMI nació con una idea muy clara: hacer que comer bien no sea aburrido. En el Centro Comercial Bellamar, a pasos de la playa, hemos creado un espacio donde la cocina mediterránea se mezcla sin complejos con influencias asiáticas, argentinas y americanas.
+        </p>
+        <p class="text-u-light text-sm leading-[1.9] mb-10">
+          Producto fresco, técnica honesta y mucho sabor. Las gyozas de papada ibérica, el steak tartar, las hamburguesas que se recuerdan... todo cocinado con el flow que solo se consigue cuando amas lo que haces.
+        </p>
+        <div class="flex items-center gap-6 border-t border-u-line pt-8">
+          <div class="text-center">
+            <p class="font-bebas text-3xl text-u-sand">Fusión</p>
+            <p class="text-[10px] text-u-gray tracking-[2px] uppercase mt-0.5">Mediterránea</p>
+          </div>
+          <div class="w-px h-10 bg-u-line"></div>
+          <div class="text-center">
+            <p class="font-bebas text-3xl text-u-sand">Beach</p>
+            <p class="text-[10px] text-u-gray tracking-[2px] uppercase mt-0.5">Vibes</p>
+          </div>
+          <div class="w-px h-10 bg-u-line"></div>
+          <div class="text-center">
+            <p class="font-bebas text-3xl text-u-sand">Pet</p>
+            <p class="text-[10px] text-u-gray tracking-[2px] uppercase mt-0.5">Friendly</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── SIGNATURE DISHES ──────────────────────── -->
+<section id="platos" class="py-24 md:py-36 bg-u-dark">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="text-center mb-14 reveal">
+      <p class="label mb-4">Lo que no te puedes perder</p>
+      <h2 class="h-giant text-[64px] md:text-[100px] text-u-white">
+        PLATOS <span class="text-u-sand">ESTRELLA</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <div class="dish-card bg-u-surf overflow-hidden reveal" style="transition-delay:0s">
+        <div class="overflow-hidden aspect-[4/3]">
+          <!-- FOTO REAL del restaurante -->
+          <img src="assets/gallery/foto2.jpg" alt="Plato UMAMI La Barrosa" class="dish-img w-full h-full object-cover">
+        </div>
+        <div class="p-6">
+          <p class="label mb-2">Firma</p>
+          <h3 class="font-playfair text-xl font-semibold text-u-cream mb-2">Gyozas de Papada Ibérica</h3>
+          <p class="text-u-light text-sm leading-relaxed">Papada de cerdo ibérico ahumada, masa artesanal crujiente. El bocado que convierte en adicto.</p>
+          <p class="text-u-sand text-[10px] tracking-[2px] uppercase mt-4 font-semibold">Asiática · Fusión</p>
+        </div>
+      </div>
+
+      <div class="dish-card bg-u-surf overflow-hidden reveal" style="transition-delay:0.08s">
+        <div class="overflow-hidden aspect-[4/3]">
+          <!-- Reemplazar con foto real de hamburguesa UMAMI -->
+          <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=85" alt="Hamburguesa Gourmet UMAMI" class="dish-img w-full h-full object-cover">
+        </div>
+        <div class="p-6">
+          <p class="label mb-2">Must Try</p>
+          <h3 class="font-playfair text-xl font-semibold text-u-cream mb-2">Hamburguesa Gourmet</h3>
+          <p class="text-u-light text-sm leading-relaxed">Carne fresca, sin congelados. La hamburguesa que hace que no quieras otra en Chiclana.</p>
+          <p class="text-u-sand text-[10px] tracking-[2px] uppercase mt-4 font-semibold">American · Artesana</p>
+        </div>
+      </div>
+
+      <div class="dish-card bg-u-surf overflow-hidden reveal" style="transition-delay:0.16s">
+        <div class="overflow-hidden aspect-[4/3]">
+          <!-- Reemplazar con foto real de steak tartar -->
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=85" alt="Steak Tartar UMAMI" class="dish-img w-full h-full object-cover">
+        </div>
+        <div class="p-6">
+          <p class="label mb-2">Clásico</p>
+          <h3 class="font-playfair text-xl font-semibold text-u-cream mb-2">Steak Tartar</h3>
+          <p class="text-u-light text-sm leading-relaxed">Preparado en sala. Solomillo fresco, alcaparras, mostaza y yema. Intensidad en cada cucharada.</p>
+          <p class="text-u-sand text-[10px] tracking-[2px] uppercase mt-4 font-semibold">Gourmet · Carnívoro</p>
+        </div>
+      </div>
+
+      <div class="dish-card bg-u-surf overflow-hidden reveal" style="transition-delay:0.08s">
+        <div class="overflow-hidden aspect-[4/3]">
+          <!-- Reemplazar con foto real de croquetas -->
+          <img src="https://images.unsplash.com/photo-1598679253544-2c97992403ea?w=600&q=85" alt="Croquetas de Jalapeño" class="dish-img w-full h-full object-cover">
+        </div>
+        <div class="p-6">
+          <p class="label mb-2">Spicy</p>
+          <h3 class="font-playfair text-xl font-semibold text-u-cream mb-2">Croquetas de Jalapeño</h3>
+          <p class="text-u-light text-sm leading-relaxed">Crujientes por fuera, cremosas por dentro. Un toque de calor que despierta el paladar.</p>
+          <p class="text-u-sand text-[10px] tracking-[2px] uppercase mt-4 font-semibold">Tapas · Picante</p>
+        </div>
+      </div>
+
+      <div class="dish-card bg-u-surf overflow-hidden reveal" style="transition-delay:0.16s">
+        <div class="overflow-hidden aspect-[4/3]">
+          <!-- Reemplazar con foto real de salmorejo -->
+          <img src="https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?w=600&q=85" alt="Salmorejo con Mango" class="dish-img w-full h-full object-cover">
+        </div>
+        <div class="p-6">
+          <p class="label mb-2">Andaluz · Fusión</p>
+          <h3 class="font-playfair text-xl font-semibold text-u-cream mb-2">Salmorejo con Mango</h3>
+          <p class="text-u-light text-sm leading-relaxed">Salmorejo gaditano con mango tropical y virutas de jamón ibérico. Lo de siempre pero diferente.</p>
+          <p class="text-u-sand text-[10px] tracking-[2px] uppercase mt-4 font-semibold">Mediterránea</p>
+        </div>
+      </div>
+
+      <div class="dish-card bg-u-surf overflow-hidden reveal" style="transition-delay:0.24s">
+        <div class="overflow-hidden aspect-[4/3]">
+          <!-- Reemplazar con foto real de barra/cocktails -->
+          <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=600&q=85" alt="Barra y Cócteles UMAMI" class="dish-img w-full h-full object-cover">
+        </div>
+        <div class="p-6">
+          <p class="label mb-2">Barra</p>
+          <h3 class="font-playfair text-xl font-semibold text-u-cream mb-2">Barra & Cócteles</h3>
+          <p class="text-u-light text-sm leading-relaxed">Cerveza de grifo, vinos de la tierra y cócteles con personalidad. Para acompañar o para empezar la noche.</p>
+          <p class="text-u-sand text-[10px] tracking-[2px] uppercase mt-4 font-semibold">Drinks · Bar</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── QUOTE ──────────────────────────────────── -->
+<section class="py-28 relative overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="assets/gallery/foto1.jpg" alt="Ambiente UMAMI" class="w-full h-full object-cover opacity-10">
+    <div class="absolute inset-0 bg-gradient-to-b from-u-black via-transparent to-u-black"></div>
+  </div>
+  <div class="relative z-10 max-w-3xl mx-auto px-5 md:px-8 text-center reveal">
+    <p class="text-u-sand text-7xl italic-sub mb-4 leading-none opacity-60">"</p>
+    <p class="italic-sub text-3xl md:text-5xl text-u-cream leading-tight">
+      No es solo comer.<br>Es una experiencia de sabores que no olvidarás.
+    </p>
+    <div class="flex items-center justify-center gap-3 mt-8">
+      <div class="w-8 h-px bg-u-sand/50"></div>
+      <p class="text-u-gray text-[10px] tracking-[3px] uppercase">Google Reviews · 4.5 ★ · +128 opiniones</p>
+      <div class="w-8 h-px bg-u-sand/50"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── GALLERY ────────────────────────────────── -->
+<section id="galeria" class="py-24 md:py-36 bg-u-dark">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 reveal">
+      <div>
+        <p class="label mb-3">@umami.labarrosa.cad</p>
+        <h2 class="h-giant text-[62px] md:text-[88px] text-u-white">GALERÍA</h2>
+      </div>
+      <a href="https://www.instagram.com/umami.labarrosa.cad/" target="_blank"
+         class="btn btn-sand mt-6 sm:mt-0 self-start sm:self-auto">Ver Instagram</a>
+    </div>
+
+    <!-- Grid: 3 fotos reales + 4 Unsplash de relleno -->
+    <!-- TODO: reemplazar fotos Unsplash con fotos reales de @umami.labarrosa.cad -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+
+      <div class="gal-cell overflow-hidden col-span-2 row-span-2 reveal" style="aspect-ratio:1/1">
+        <img src="assets/gallery/foto1.jpg" alt="UMAMI La Barrosa exterior noche" class="gal-img w-full h-full object-cover">
+      </div>
+      <div class="gal-cell overflow-hidden reveal" style="aspect-ratio:1/1;transition-delay:0.05s">
+        <img src="assets/gallery/foto3.jpg" alt="Interior UMAMI" class="gal-img w-full h-full object-cover">
+      </div>
+      <div class="gal-cell overflow-hidden reveal" style="aspect-ratio:1/1;transition-delay:0.1s">
+        <img src="assets/gallery/foto2.jpg" alt="Plato UMAMI" class="gal-img w-full h-full object-cover">
+      </div>
+      <div class="gal-cell overflow-hidden reveal" style="aspect-ratio:1/1;transition-delay:0.15s">
+        <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80" alt="Platos UMAMI" class="gal-img w-full h-full object-cover">
+      </div>
+      <div class="gal-cell overflow-hidden reveal" style="aspect-ratio:1/1;transition-delay:0.2s">
+        <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500&q=80" alt="Hamburguesa UMAMI" class="gal-img w-full h-full object-cover">
+      </div>
+      <div class="gal-cell overflow-hidden reveal" style="aspect-ratio:1/1;transition-delay:0.25s">
+        <img src="https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=500&q=80" alt="Cócteles UMAMI" class="gal-img w-full h-full object-cover">
+      </div>
+      <div class="gal-cell overflow-hidden reveal" style="aspect-ratio:1/1;transition-delay:0.3s">
+        <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&q=80" alt="Postres UMAMI" class="gal-img w-full h-full object-cover">
+      </div>
+    </div>
+
+    <p class="text-center text-u-gray text-[10px] tracking-[2px] uppercase mt-6 reveal">
+      Síguenos en Instagram para ver todas las fotos · @umami.labarrosa.cad
+    </p>
+  </div>
+</section>
+
+
+<!-- ── CARTA ──────────────────────────────────── -->
+<section id="carta" class="py-24 md:py-36">
+  <div class="max-w-5xl mx-auto px-5 md:px-8">
+
+    <div class="text-center mb-16 reveal">
+      <p class="label mb-4">Lo que cocinamos</p>
+      <h2 class="h-giant text-[64px] md:text-[100px] text-u-white">
+        LA <span class="text-u-sand">CARTA</span>
+      </h2>
+      <p class="italic-sub text-xl text-u-cream/70 mt-2">Una selección de lo que nos hace únicos</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-x-16">
+
+      <div class="reveal">
+        <h3 class="label text-u-cream/40 mb-5 pb-4 border-b border-u-line">Para Picar</h3>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Gyozas de Papada Ibérica</p><p class="text-u-gray text-xs mt-0.5">Cerdo ibérico ahumado · salsa ponzu</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Croquetas de Jalapeño</p><p class="text-u-gray text-xs mt-0.5">Bechamel cremosa · toque picante</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Tosta de Atún</p><p class="text-u-gray text-xs mt-0.5">Atún de almadraba · aguacate · sésamo</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Empanadas Argentinas</p><p class="text-u-gray text-xs mt-0.5">Masa casera · relleno del día</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Patatas Fritas Caseras</p><p class="text-u-gray text-xs mt-0.5">Recién hechas · salsas de la casa</p></div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.1s">
+        <h3 class="label text-u-cream/40 mb-5 pb-4 border-b border-u-line">Frescos</h3>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Salmorejo con Mango</p><p class="text-u-gray text-xs mt-0.5">Salmorejo gaditano · mango · virutas ibéricas</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Ensalada de Burrata</p><p class="text-u-gray text-xs mt-0.5">Burrata fresca · tomate · albahaca · AOVE</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Ensaladilla Rusa</p><p class="text-u-gray text-xs mt-0.5">Receta de la casa · toque gourmet</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Ceviche del Día</p><p class="text-u-gray text-xs mt-0.5">Pescado fresco · limón · cilantro</p></div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.15s">
+        <h3 class="label text-u-cream/40 mb-5 mt-10 pb-4 border-b border-u-line">Principales</h3>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Steak Tartar</p><p class="text-u-gray text-xs mt-0.5">Solomillo · alcaparras · mostaza · yema</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Patty Melt</p><p class="text-u-gray text-xs mt-0.5">Smash burger · queso fundido · cebolla caramelizada</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Donut de Plancha</p><p class="text-u-gray text-xs mt-0.5">El postre que se convierte en plato estrella</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Curry de Pollo</p><p class="text-u-gray text-xs mt-0.5">Pollo de corral · leche de coco · arroz basmati</p></div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.2s">
+        <h3 class="label text-u-cream/40 mb-5 mt-10 pb-4 border-b border-u-line">Hamburguesas</h3>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">La UMAMI</p><p class="text-u-gray text-xs mt-0.5">Nuestra firma · queso · salsas secretas</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Hamburguesa Gourmet</p><p class="text-u-gray text-xs mt-0.5">200g · queso madurado · cebolla confitada</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Pollo Crujiente</p><p class="text-u-gray text-xs mt-0.5">Pollo empanado · coleslaw · salsa sriracha</p></div>
+        <div class="menu-row py-4"><p class="menu-name text-u-cream text-sm font-medium">Veggie Burger</p><p class="text-u-gray text-xs mt-0.5">Hamburguesa vegetal · aguacate · rúcula</p></div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-16 reveal">
+      <p class="text-u-gray text-xs mb-6 tracking-wide">Carta completa disponible en el restaurante · Productos de temporada</p>
+      <a href="tel:+34681884155" class="btn btn-solid">Reservar Mesa · 681 88 41 55</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── LOCATION ───────────────────────────────── -->
+<section id="ubicacion" class="py-24 md:py-36 bg-u-dark">
+  <div class="max-w-7xl mx-auto px-5 md:px-8">
+    <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
+
+      <div class="reveal-left">
+        <p class="label mb-4">Encuéntranos</p>
+        <h2 class="h-giant text-[60px] md:text-[86px] text-u-white">DÓNDE</h2>
+        <h2 class="h-giant text-[60px] md:text-[86px] text-u-sand mb-10">ESTAMOS</h2>
+
+        <div class="flex gap-4 mb-7">
+          <div class="w-9 h-9 border border-u-line flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8a97a" stroke-width="1.5">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-u-cream font-medium text-sm mb-1">Dirección</p>
+            <p class="text-u-light text-sm leading-relaxed">CC Bellamar, 3ª Pista de La Barrosa<br>11139 Chiclana de la Frontera, Cádiz</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mb-7">
+          <div class="w-9 h-9 border border-u-line flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8a97a" stroke-width="1.5">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.06 2.18 2 2 0 012.03 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-u-cream font-medium text-sm mb-1">Teléfono</p>
+            <a href="tel:+34681884155" class="text-u-sand text-sm hover:text-u-cream transition-colors">681 88 41 55</a>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mb-10">
+          <div class="w-9 h-9 border border-u-line flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c8a97a" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-u-cream font-medium text-sm mb-4">Horario</p>
+            <div class="space-y-2 text-sm">
+              <div class="flex gap-6"><span class="text-u-gray w-24 flex-shrink-0">Lun · Mar</span><span class="text-u-gray italic">Cerrado</span></div>
+              <div class="flex gap-6"><span class="text-u-gray w-24 flex-shrink-0">Miércoles</span><span class="text-u-cream">19:00 — 01:00</span></div>
+              <div class="flex gap-6"><span class="text-u-gray w-24 flex-shrink-0">Jueves</span><span class="text-u-cream">12:00 — 01:00</span></div>
+              <div class="flex gap-6"><span class="text-u-gray w-24 flex-shrink-0">Vie · Sáb</span><span class="text-u-cream">13:00 — 01:00</span></div>
+              <div class="flex gap-6"><span class="text-u-gray w-24 flex-shrink-0">Domingo</span><span class="text-u-cream">20:00 — 01:00</span></div>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://www.instagram.com/umami.labarrosa.cad/" target="_blank"
+           class="inline-flex items-center gap-2 text-u-gray hover:text-u-sand transition-colors text-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+          @umami.labarrosa.cad
+        </a>
+      </div>
+
+      <div class="reveal">
+        <div class="map-wrap overflow-hidden h-80 md:h-[480px]">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3207.0!2d-6.1748!3d36.3895!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd0dd139c1b28abd%3A0x96d1a4f8b5ae70b2!2sUmami%20La%20Barrosa!5e0!3m2!1ses!2ses!4v1700000000000!5m2!1ses!2ses"
+            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" title="UMAMI La Barrosa mapa">
+          </iframe>
+        </div>
+        <p class="text-u-gray text-[10px] tracking-[2px] uppercase text-center mt-3">
+          CC Bellamar · 3ª Pista La Barrosa · Chiclana de la Frontera
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ── RESERVATION CTA ────────────────────────── -->
+<section class="py-32 relative overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="assets/gallery/foto3.jpg" alt="Reserva en UMAMI" class="w-full h-full object-cover opacity-10">
+    <div class="absolute inset-0 bg-gradient-to-b from-u-black via-u-black/80 to-u-black"></div>
+  </div>
+  <div class="relative z-10 max-w-3xl mx-auto px-5 md:px-8 text-center reveal">
+    <p class="label mb-6">¿Listo para vivir la experiencia?</p>
+    <h2 class="h-giant text-[64px] md:text-[110px] text-u-white">RESERVA</h2>
+    <h2 class="h-giant text-[64px] md:text-[110px] text-u-sand mb-8">TU MESA</h2>
+    <p class="italic-sub text-xl text-u-cream/70 mb-10">Llámanos o visítanos directamente. Sin complicaciones.</p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="tel:+34681884155" class="btn btn-solid text-base px-10 py-4">Llamar · 681 88 41 55</a>
+      <a href="https://www.instagram.com/umami.labarrosa.cad/" target="_blank" class="btn btn-white">Instagram</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer class="bg-u-dark border-t border-u-line">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+
+      <div>
+        <div class="flex items-center gap-3 mb-5">
+          <img src="assets/logo.png" alt="UMAMI" class="h-12 w-12 object-cover rounded-full"
+               onerror="this.outerHTML='<span class=\'font-bebas text-3xl tracking-widest\'>UMAMI</span>'">
+          <div>
+            <p class="font-bebas text-xl tracking-[4px]">UMAMI</p>
+            <p class="text-[9px] text-u-sand tracking-[2px] uppercase">Sancti Petri · Cádiz</p>
+          </div>
+        </div>
+        <p class="text-u-light text-sm leading-relaxed max-w-xs">
+          Gastrobar en la Playa de la Barrosa. Cocina fusión mediterránea con alma gaditana y flow surfero.
+        </p>
+        <div class="flex items-center gap-2 mt-4">
+          <div class="w-4 h-px bg-u-sand/50"></div>
+          <p class="text-u-sand text-[10px]">★★★★★ 4.5 Google</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="label mb-5">Navegación</p>
+        <ul class="space-y-3">
+          <li><a href="#nosotros"  class="text-u-light text-sm hover:text-u-cream transition-colors">Nosotros</a></li>
+          <li><a href="#platos"    class="text-u-light text-sm hover:text-u-cream transition-colors">Platos Estrella</a></li>
+          <li><a href="#galeria"   class="text-u-light text-sm hover:text-u-cream transition-colors">Galería</a></li>
+          <li><a href="#carta"     class="text-u-light text-sm hover:text-u-cream transition-colors">La Carta</a></li>
+          <li><a href="#ubicacion" class="text-u-light text-sm hover:text-u-cream transition-colors">Ubicación</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="label mb-5">Contacto</p>
+        <div class="space-y-3">
+          <p class="text-u-light text-sm leading-relaxed">CC Bellamar · 3ª Pista La Barrosa<br>11139 Chiclana de la Frontera, Cádiz</p>
+          <a href="tel:+34681884155" class="block text-u-sand text-sm hover:text-u-cream transition-colors">681 88 41 55</a>
+          <a href="https://www.instagram.com/umami.labarrosa.cad/" target="_blank"
+             class="inline-flex items-center gap-2 text-u-light text-sm hover:text-u-sand transition-colors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+            @umami.labarrosa.cad
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="border-t border-u-line pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
+      <p class="text-u-gray text-xs">© 2025 UMAMI La Barrosa · Todos los derechos reservados</p>
+      <p class="text-u-gray text-xs">Diseño web por <a href="#" class="text-u-sand hover:text-u-cream transition-colors">Cruz Digital</a></p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ── SCRIPTS ────────────────────────────────── -->
+<script>
+  function toggleMenu() {
+    const menu    = document.getElementById('mmenu');
+    const overlay = document.getElementById('overlay');
+    const open    = document.getElementById('ico-open');
+    const close   = document.getElementById('ico-close');
+    const isOpen  = menu.classList.toggle('open');
+    overlay.classList.toggle('hidden', !isOpen);
+    open.classList.toggle('hidden', isOpen);
+    close.classList.toggle('hidden', !isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  }
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('up'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left').forEach(el => obs.observe(el));
+
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.style.borderBottomColor = window.scrollY > 60 ? 'rgba(42,42,42,0.5)' : 'rgba(42,42,42,1)';
+  }, { passive: true });
+</script>
+
+</body>
+</html>

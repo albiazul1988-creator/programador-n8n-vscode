@@ -1,0 +1,459 @@
+{
+  "updatedAt": "2026-03-13T18:42:34.668Z",
+  "createdAt": "2026-03-13T18:42:34.668Z",
+  "id": "VqIROQITBPpsLmGO",
+  "name": "📩 Follow-up Automático - Cruz Digital",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "id": "node-schedule-trigger",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "1G_O-kBz8vCAYd7HQDO4gJDv2Pke1C1ysv0VQUsX3oJQ",
+          "mode": "list",
+          "cachedResultName": "clientes posibles leads datos.CRUZ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G_O-kBz8vCAYd7HQDO4gJDv2Pke1C1ysv0VQUsX3oJQ/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G_O-kBz8vCAYd7HQDO4gJDv2Pke1C1ysv0VQUsX3oJQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        460,
+        300
+      ],
+      "id": "node-leer-sheets",
+      "name": "Leer Google Sheets",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nconst now = new Date();\n\nconst pending = items.filter(item => {\n  const estado = (item.json['Estado'] || '').trim();\n  const fechaEnvio = item.json['Fecha Envio'] || '';\n  \n  if (estado !== 'Enviado') return false;\n  \n  if (!fechaEnvio) return false;\n  const parts = fechaEnvio.split('/');\n  if (parts.length !== 3) return false;\n  const sent = new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);\n  const diffDays = (now - sent) / (1000 * 60 * 60 * 24);\n  return diffDays >= 3;\n});\n\nif (pending.length === 0) return [{ json: { noLeads: true } }];\nreturn pending.map(item => ({ json: item.json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ],
+      "id": "node-filtrar-leads",
+      "name": "Filtrar Leads para Seguimiento"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-no-leads",
+              "leftValue": "={{ $json.noLeads }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        300
+      ],
+      "id": "node-if-hay-leads",
+      "name": "IF Hay Leads"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        },
+        "batchSize": 1
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        300
+      ],
+      "id": "node-loop",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            {
+              "name": "correo",
+              "stringValue": "={{ $json['Correo'] }}"
+            },
+            {
+              "name": "web",
+              "stringValue": "={{ $json['Web'] }}"
+            },
+            {
+              "name": "asunto_original",
+              "stringValue": "={{ $json['Correo Icebreaker'] }}"
+            },
+            {
+              "name": "fecha_envio",
+              "stringValue": "={{ $json['Fecha Envio'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1340,
+        300
+      ],
+      "id": "node-preparar-datos",
+      "name": "Preparar Datos Lead"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.4,
+          "maxTokens": 1500
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres un experto en ventas B2B con 15 años de experiencia cerrando contratos con pequeños comercios y pymes en España. Tu especialidad es escribir emails de seguimiento que consiguen respuesta sin ser pesados ni agresivos.\n\nTu estilo:\n- Emails cortos (máximo 5 líneas de cuerpo)\n- Tono cercano, natural, como si lo escribiera una persona real\n- Nunca uses frases genéricas de ventas\n- Siempre hay una pregunta directa al final\n- El objetivo es conseguir una respuesta, no vender en el email\n- Escribes en español de España\n\nReglas de oro:\n1. Jamás empieces con 'Espero que este email te encuentre bien'\n2. Referencia el email anterior de forma natural\n3. Añade un dato o beneficio nuevo que no estaba en el primer email\n4. Termina con una pregunta fácil de responder (sí/no o en 1 línea)\n5. Firma siempre como Cruz Digital"
+            },
+            {
+              "role": "user",
+              "content": "=Datos del lead:\n- Web: {{ $json.web }}\n- Asunto del primer email que enviamos: {{ $json.asunto_original }}\n- Fecha del primer email: {{ $json.fecha_envio }}\n\nEscribe un email de seguimiento en HTML para este lead.\n\nREQUISITOS:\n1. ASUNTO: debe ser diferente al original, más corto y directo. Devuélvelo en la primera línea como: ASUNTO: [el asunto]\n2. CUERPO HTML: email corto (4-5 líneas), diseño limpio y profesional\n   - Fondo blanco, tipografía Arial\n   - Párrafo inicial: referencia al email anterior de forma natural\n   - Párrafo central: menciona UN beneficio concreto y nuevo\n   - Pregunta de cierre: simple y directa\n   - Footer: 'Cruz Digital | albiazul1988@gmail.com'\n3. Formato de respuesta EXACTO:\nASUNTO: [asunto aquí]\nHTML: [código html aquí]"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1560,
+        300
+      ],
+      "id": "node-gpt4o-redactor",
+      "name": "GPT-4o Redactor Follow-up",
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const content = $json.message && $json.message.content ? $json.message.content : ($json.text || '');\nconst lines = content.split('\\n');\n\nlet asunto = '';\nlet htmlStart = -1;\n\nfor (let i = 0; i < lines.length; i++) {\n  if (lines[i].startsWith('ASUNTO:')) {\n    asunto = lines[i].replace('ASUNTO:', '').trim();\n  }\n  if (lines[i].startsWith('HTML:')) {\n    htmlStart = i;\n    break;\n  }\n}\n\nlet htmlContent = '';\nif (htmlStart >= 0) {\n  htmlContent = lines.slice(htmlStart + 1).join('\\n').trim();\n  htmlContent = htmlContent.replace(/^```html?\\n?/, '').replace(/\\n?```$/, '');\n}\n\nreturn [{\n  json: {\n    asunto: asunto || 'Seguimiento - Cruz Digital',\n    html: htmlContent || content,\n    correo: $('Preparar Datos Lead').item.json.correo,\n    web: $('Preparar Datos Lead').item.json.web\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        300
+      ],
+      "id": "node-extraer-asunto-html",
+      "name": "Extraer Asunto y HTML"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.correo }}",
+        "subject": "={{ $json.asunto }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2000,
+        300
+      ],
+      "id": "node-gmail-send",
+      "name": "Gmail Enviar Follow-up",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "59B2ehjmeBecNvB3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1G_O-kBz8vCAYd7HQDO4gJDv2Pke1C1ysv0VQUsX3oJQ",
+          "mode": "list",
+          "cachedResultName": "clientes posibles leads datos.CRUZ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G_O-kBz8vCAYd7HQDO4gJDv2Pke1C1ysv0VQUsX3oJQ/edit"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1G_O-kBz8vCAYd7HQDO4gJDv2Pke1C1ysv0VQUsX3oJQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Web": "={{ $('Extraer Asunto y HTML').item.json.web }}",
+            "Estado": "Seguimiento enviado",
+            "Fecha Seguimiento": "={{ $now.toFormat('dd/MM/yyyy') }}"
+          },
+          "matchingColumns": [
+            "Web"
+          ],
+          "schema": [
+            {
+              "id": "Web",
+              "displayName": "Web",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha Seguimiento",
+              "displayName": "Fecha Seguimiento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2220,
+        300
+      ],
+      "id": "node-actualizar-sheets",
+      "name": "Actualizar Estado en Sheets",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Leer Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Leads para Seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Leads para Seguimiento": {
+      "main": [
+        [
+          {
+            "node": "IF Hay Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Hay Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Preparar Datos Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos Lead": {
+      "main": [
+        [
+          {
+            "node": "GPT-4o Redactor Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o Redactor Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Extraer Asunto y HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Asunto y HTML": {
+      "main": [
+        [
+          {
+            "node": "Gmail Enviar Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Enviar Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Estado en Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Estado en Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "90e15595-ce83-4e6b-8301-7a47c2dbe81b",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-03-13T18:42:34.669Z",
+      "createdAt": "2026-03-13T18:42:34.669Z",
+      "role": "workflow:owner",
+      "workflowId": "VqIROQITBPpsLmGO",
+      "projectId": "2jkX7sLlz3fAgKbI",
+      "project": {
+        "updatedAt": "2026-03-11T12:56:00.411Z",
+        "createdAt": "2026-03-11T12:52:16.408Z",
+        "id": "2jkX7sLlz3fAgKbI",
+        "name": "JUAN CRUZ BOGLIOTTI RUBIO <albiazul1988@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "60396286-6c5a-49c3-945a-eac9765e21f7"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

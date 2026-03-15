@@ -1,0 +1,311 @@
+{
+  "updatedAt": "2026-03-13T18:05:41.687Z",
+  "createdAt": "2026-03-13T18:05:41.687Z",
+  "id": "ZtOUk9j9CaVJvqIP",
+  "name": "🤖 Daily AI Brief - Cruz Digital",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 7 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "id": "node-schedule-trigger",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss/search?q=inteligencia+artificial+agentes+IA+automatizacion&hl=es&gl=ES&ceid=ES:es"
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        480,
+        160
+      ],
+      "id": "node-rss-google",
+      "name": "RSS Google News IA"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/"
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        480,
+        300
+      ],
+      "id": "node-rss-techcrunch",
+      "name": "RSS TechCrunch AI"
+    },
+    {
+      "parameters": {
+        "url": "https://venturebeat.com/category/ai/feed/"
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        480,
+        440
+      ],
+      "id": "node-rss-venturebeat",
+      "name": "RSS VentureBeat AI"
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        720,
+        300
+      ],
+      "id": "node-merge",
+      "name": "Merge RSS Feeds"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst now = new Date();\nconst yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);\nconst filtered = items\n  .filter(item => {\n    const dateStr = item.json.pubDate || item.json.isoDate || item.json.date || \"\";\n    if (!dateStr) return true;\n    const pubDate = new Date(dateStr);\n    return isNaN(pubDate.getTime()) || pubDate > yesterday;\n  })\n  .map(item => ({\n    title: (item.json.title || \"\").replace(/<[^>]+>/g, \"\").trim(),\n    description: (item.json.contentSnippet || item.json.description || item.json.summary || \"\")\n      .replace(/<[^>]+>/g, \"\").substring(0, 400).trim(),\n    link: item.json.link || item.json.url || \"\",\n    pubDate: item.json.pubDate || item.json.isoDate || new Date().toISOString(),\n    source: item.json.creator || \"\"\n  }))\n  .filter(item => item.title.length > 10)\n  .slice(0, 30);\nreturn filtered.map(f => ({ json: f }));",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ],
+      "id": "node-filter-24h",
+      "name": "Filtrar Noticias 24h"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst date = new Date().toLocaleDateString(\"es-ES\", { weekday: \"long\", year: \"numeric\", month: \"long\", day: \"numeric\" });\nlet newsText = items.map((item, i) => {\n  return \"[\" + (i+1) + \"]\\nTITULO: \" + item.json.title + \"\\nRESUMEN: \" + item.json.description + \"\\nENLACE: \" + item.json.link + \"\\nFECHA: \" + item.json.pubDate;\n}).join(\"\\n\\n---\\n\\n\");\nreturn [{ json: { newsText, count: items.length, date } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ],
+      "id": "node-preparar-gpt",
+      "name": "Preparar para GPT"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Eres el analista de inteligencia artificial mas perspicaz del mundo, especializado en identificar oportunidades de negocio para empresas que comercializan agentes de IA y automatizaciones a pymes y comercios locales en Espana.\n\nTu mision diaria: transformar el ruido informativo de la IA en senales claras y accionables para Cruz Digital, empresa que vende agentes de IA a comercios locales.\n\nCriterios de seleccion (en orden de prioridad):\n1. Nuevas capacidades de modelos IA (GPT, Claude, Gemini, Llama)\n2. Casos de exito de IA en negocios locales (restaurantes, tiendas, hoteles, clinicas)\n3. Nuevas herramientas de automatizacion (n8n, Make, Zapier)\n4. Estadisticas de adopcion de IA en pymes europeas o espanolas\n5. Regulacion IA en Europa que afecte a comercios\n6. Tendencias que generen nuevas necesidades en clientes potenciales\n\nPara cada noticia DEBES incluir una seccion con una accion comercial concreta para Cruz Digital.\n\nFormato de salida: HTML profesional y elegante listo para Gmail. Responde UNICAMENTE con el HTML, sin explicaciones.",
+              "role": "system"
+            },
+            {
+              "content": "=Fecha de hoy: {{ $json.date }}\nTotal noticias analizadas: {{ $json.count }}\n\n{{ $json.newsText }}\n\n---\n\nINSTRUCCIONES:\n1. Selecciona las 5 noticias mas relevantes para Cruz Digital\n2. Si hay menos de 5 realmente relevantes, incluye solo las buenas, calidad sobre cantidad\n3. Genera email HTML con header oscuro gradient (linear-gradient 135deg de #0f0c29 a #302b63 a #24243e), padding 40px, h1 blanco 28px con robot emoji y texto Daily AI Brief, subtitulo fecha en color #a29bfe, tagline Tu ventaja competitiva en IA Cruz Digital en gris claro.\n\nCUERPO background #f8f9ff padding 30px: Para cada noticia tarjeta blanca con border-radius 12px box-shadow margin-bottom 20px. Dentro: numero y titulo en #6c63ff bold 16px, fecha en gris 12px, resumen en #333 line-height 1.6, boton Leer mas con background #6c63ff color blanco border-radius 6px padding 8px 16px, recuadro Oportunidad para Cruz Digital con background #f0eeff border-left 4px solid #6c63ff padding 12px italic.\n\nFOOTER background #1a1a2e color #888 padding 20px texto centrado Cruz Digital Tu partner en IA para comercios albiazul1988@gmail.com\n\n4. HTML valido responsive impecable en Gmail"
+            }
+          ]
+        },
+        "jsonOutput": false,
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 3500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1440,
+        300
+      ],
+      "id": "node-gpt4o",
+      "name": "GPT-4o Analista IA",
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "albiazul1988@gmail.com",
+        "subject": "=🤖 Daily AI Brief — {{ new Date().toLocaleDateString(\"es-ES\", { weekday: \"long\", year: \"numeric\", month: \"long\", day: \"numeric\" }) }}",
+        "message": "={{ $json.message.content }}",
+        "options": {
+          "appendAttribution": false,
+          "emailType": "html"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1680,
+        300
+      ],
+      "id": "node-gmail",
+      "name": "Gmail Enviar Digest",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "59B2ehjmeBecNvB3",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Google News IA",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS TechCrunch AI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS VentureBeat AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Google News IA": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS TechCrunch AI": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS VentureBeat AI": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge RSS Feeds": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Noticias 24h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Noticias 24h": {
+      "main": [
+        [
+          {
+            "node": "Preparar para GPT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar para GPT": {
+      "main": [
+        [
+          {
+            "node": "GPT-4o Analista IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o Analista IA": {
+      "main": [
+        [
+          {
+            "node": "Gmail Enviar Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "4f993564-df03-4ab6-9c53-db9a4d918ca6",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-03-13T18:05:41.689Z",
+      "createdAt": "2026-03-13T18:05:41.689Z",
+      "role": "workflow:owner",
+      "workflowId": "ZtOUk9j9CaVJvqIP",
+      "projectId": "2jkX7sLlz3fAgKbI",
+      "project": {
+        "updatedAt": "2026-03-11T12:56:00.411Z",
+        "createdAt": "2026-03-11T12:52:16.408Z",
+        "id": "2jkX7sLlz3fAgKbI",
+        "name": "JUAN CRUZ BOGLIOTTI RUBIO <albiazul1988@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "60396286-6c5a-49c3-945a-eac9765e21f7"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}

@@ -1,0 +1,208 @@
+{
+  "name": "MRR-06 Producción Maestro (Orquestador Semanal)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "id": "node-schedule",
+      "name": "Schedule Lunes 8AM"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "REEMPLAZAR_CON_ID_SHEET_CLIENTES_SERVICIO",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clientes",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            { "lookupColumn": "Estado", "lookupValue": "activo" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 300],
+      "id": "node-leer-clientes",
+      "name": "Leer Clientes Activos",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconsole.log('=== PRODUCCIÓN SEMANAL LEADPILOT ===');\nconsole.log('Clientes activos a procesar: ' + items.length);\nconsole.log('Fecha: ' + new Date().toLocaleDateString('es-ES'));\nreturn items;",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "id": "node-log-inicio",
+      "name": "Log Inicio Producción"
+    },
+    {
+      "parameters": {
+        "options": { "reset": false },
+        "batchSize": 1
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [900, 300],
+      "id": "node-loop-clientes",
+      "name": "Loop Clientes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "v1", "name": "cliente_nombre", "value": "={{ $json.Nombre_Cliente }}", "type": "string" },
+            { "id": "v2", "name": "ciudad", "value": "={{ $json.Ciudad }}", "type": "string" },
+            { "id": "v3", "name": "categorias", "value": "={{ $json.Categorias }}", "type": "string" },
+            { "id": "v4", "name": "sheet_id", "value": "={{ $json.Sheet_ID }}", "type": "string" },
+            { "id": "v5", "name": "limite", "value": "={{ $json.Limite_Semanal || 50 }}", "type": "number" },
+            { "id": "v6", "name": "nombre_remitente", "value": "={{ $json.Nombre_Remitente || 'Juan' }}", "type": "string" },
+            { "id": "v7", "name": "descripcion_servicio", "value": "={{ $json.Descripcion_Servicio || 'captación automática de clientes para tu negocio' }}", "type": "string" },
+            { "id": "v8", "name": "precio_servicio", "value": "={{ $json.Plan === 'Pro' ? '450€/mes' : ($json.Plan === 'Agency' ? '800€/mes' : '250€/mes') }}", "type": "string" }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1120, 300],
+      "id": "node-vars-cliente",
+      "name": "Variables del Cliente"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.cruzn8n.com/webhook/mrr-prospeccion",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ cliente_nombre: $json.cliente_nombre, ciudad: $json.ciudad, categorias: $json.categorias, sheet_id: $json.sheet_id, limite: $json.limite }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "node-ejecutar-prospeccion",
+      "name": "Ejecutar: Prospección (WF-01)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1560, 200],
+      "id": "node-espera",
+      "name": "Esperar 30s (APIs Google)"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.cruzn8n.com/webhook/mrr-propuestas",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ cliente_nombre: $('Variables del Cliente').item.json.cliente_nombre, sheet_id: $('Variables del Cliente').item.json.sheet_id, nombre_remitente: $('Variables del Cliente').item.json.nombre_remitente, descripcion_servicio: $('Variables del Cliente').item.json.descripcion_servicio, precio_servicio: $('Variables del Cliente').item.json.precio_servicio }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "node-ejecutar-propuestas",
+      "name": "Ejecutar: Propuestas WhatsApp (WF-02)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cliente = $('Variables del Cliente').first().json;\nconst resultProspeccion = $('Ejecutar: Prospección (WF-01)').first().json;\nconst resultPropuestas = $('Ejecutar: Propuestas WhatsApp (WF-02)').first().json;\n\nconsole.log('✓ Cliente procesado: ' + cliente.cliente_nombre);\nconsole.log('  Prospección: ' + JSON.stringify(resultProspeccion).substring(0, 100));\nconsole.log('  Propuestas: ' + JSON.stringify(resultPropuestas).substring(0, 100));\n\nreturn [{\n  json: {\n    cliente_nombre: cliente.cliente_nombre,\n    status: 'completado',\n    ciudad: cliente.ciudad\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 200],
+      "id": "node-log-cliente",
+      "name": "Log Cliente Completado"
+    },
+    {
+      "parameters": {
+        "amount": 60,
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2220, 200],
+      "id": "node-espera-entre-clientes",
+      "name": "Esperar 60s entre Clientes"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconsole.log('=== PRODUCCIÓN SEMANAL COMPLETADA ===');\nconsole.log('Clientes procesados: ' + items.length);\nitems.forEach(i => console.log('  ✓ ' + i.json.cliente_nombre));\nconsole.log('Follow-ups y reportes se ejecutarán automáticamente (WF-03 diario, WF-04 viernes)');\nreturn [{ json: { total_clientes: items.length, status: 'produccion_semanal_ok', fecha: new Date().toLocaleDateString('es-ES') } }];",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2440, 300],
+      "id": "node-log-final",
+      "name": "Resumen Producción Semanal"
+    }
+  ],
+  "connections": {
+    "Schedule Lunes 8AM": { "main": [[{ "node": "Leer Clientes Activos", "type": "main", "index": 0 }]] },
+    "Leer Clientes Activos": { "main": [[{ "node": "Log Inicio Producción", "type": "main", "index": 0 }]] },
+    "Log Inicio Producción": { "main": [[{ "node": "Loop Clientes", "type": "main", "index": 0 }]] },
+    "Loop Clientes": {
+      "main": [
+        [{ "node": "Resumen Producción Semanal", "type": "main", "index": 0 }],
+        [{ "node": "Variables del Cliente", "type": "main", "index": 0 }]
+      ]
+    },
+    "Variables del Cliente": { "main": [[{ "node": "Ejecutar: Prospección (WF-01)", "type": "main", "index": 0 }]] },
+    "Ejecutar: Prospección (WF-01)": { "main": [[{ "node": "Esperar 30s (APIs Google)", "type": "main", "index": 0 }]] },
+    "Esperar 30s (APIs Google)": { "main": [[{ "node": "Ejecutar: Propuestas WhatsApp (WF-02)", "type": "main", "index": 0 }]] },
+    "Ejecutar: Propuestas WhatsApp (WF-02)": { "main": [[{ "node": "Log Cliente Completado", "type": "main", "index": 0 }]] },
+    "Log Cliente Completado": { "main": [[{ "node": "Esperar 60s entre Clientes", "type": "main", "index": 0 }]] },
+    "Esperar 60s entre Clientes": { "main": [[{ "node": "Loop Clientes", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}

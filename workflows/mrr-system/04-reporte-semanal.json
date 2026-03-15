@@ -1,0 +1,196 @@
+{
+  "name": "MRR-04 Reporte Semanal por Cliente",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 17 * * 5"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "id": "node-schedule",
+      "name": "Schedule Viernes 17h"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "REEMPLAZAR_CON_ID_SHEET_CLIENTES_SERVICIO",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clientes",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            { "lookupColumn": "Estado", "lookupValue": "activo" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 300],
+      "id": "node-leer-clientes",
+      "name": "Leer Clientes Activos",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": { "reset": false },
+        "batchSize": 1
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 300],
+      "id": "node-loop-clientes",
+      "name": "Loop Clientes"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.Sheet_ID }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [900, 300],
+      "id": "node-leer-leads",
+      "name": "Leer Todos los Leads del Cliente",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const leads = $input.all();\nconst cliente = $('Loop Clientes').first().json;\nconst now = new Date();\nconst unaSemanaAtras = new Date(now - 7 * 24 * 60 * 60 * 1000);\n\nconst parseDate = (dateStr) => {\n  if (!dateStr) return null;\n  const parts = dateStr.split('/');\n  if (parts.length !== 3) return null;\n  return new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);\n};\n\nconst leadsEstaSemana = leads.filter(l => {\n  const fecha = parseDate(l.json['Fecha Contacto']);\n  return fecha && fecha >= unaSemanaAtras;\n});\n\nconst total = leads.length;\nconst estaSemana = leadsEstaSemana.length;\nconst enviados = leads.filter(l => ['Enviado', 'Seguimiento enviado', 'Interesado', 'Cliente'].includes(l.json['Estado'])).length;\nconst seguimientos = leads.filter(l => l.json['Estado'] === 'Seguimiento enviado').length;\nconst interesados = leads.filter(l => l.json['Estado'] === 'Interesado').length;\nconst clientes_cerrados = leads.filter(l => l.json['Estado'] === 'Cliente').length;\n\nconst tasa_respuesta = enviados > 0 ? Math.round((interesados / enviados) * 100) : 0;\n\nreturn [{\n  json: {\n    cliente_nombre: cliente.Nombre_Cliente,\n    email_cliente: cliente.Email_Cliente,\n    plan: cliente.Plan,\n    ciudad: cliente.Ciudad,\n    total_leads_historico: total,\n    contactados_esta_semana: estaSemana,\n    total_enviados: enviados,\n    total_seguimientos: seguimientos,\n    total_interesados: interesados,\n    clientes_cerrados: clientes_cerrados,\n    tasa_respuesta_pct: tasa_respuesta,\n    fecha_reporte: now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300],
+      "id": "node-calcular-metricas",
+      "name": "Calcular Métricas de la Semana"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": {
+          "temperature": 0.3,
+          "maxTokens": 2000
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres un experto en marketing digital y diseñas reportes ejecutivos profesionales en HTML. Tu tarea es generar emails HTML responsivos, limpios y profesionales que transmitan valor al cliente. Usa un diseño moderno con colores corporativos (azul oscuro #0f2744, verde éxito #22c55e, gris claro #f8fafc). El tono es positivo, orientado a resultados, y destaca el ROI del servicio."
+            },
+            {
+              "role": "user",
+              "content": "=Genera un reporte semanal HTML para el cliente con estos datos:\n\nCliente: {{ $json.cliente_nombre }}\nPlan: {{ $json.plan }}\nCiudad objetivo: {{ $json.ciudad }}\nFecha: {{ $json.fecha_reporte }}\n\nMÉTRICAS DE ESTA SEMANA:\n- Negocios contactados esta semana: {{ $json.contactados_esta_semana }}\n- Total enviados (histórico): {{ $json.total_enviados }}\n- Follow-ups enviados: {{ $json.total_seguimientos }}\n- Negocios interesados: {{ $json.total_interesados }}\n- Clientes cerrados: {{ $json.clientes_cerrados }}\n- Tasa de respuesta: {{ $json.tasa_respuesta_pct }}%\n\nEl HTML debe incluir:\n1. Header con logo placeholder Cruz Digital y título 'Reporte Semanal LeadPilot'\n2. Saludo personalizado al cliente\n3. Cards con las métricas clave (usa íconos emoji)\n4. Párrafo de análisis: qué está funcionando, próximos pasos\n5. Footer con: Cruz Digital | albiazul1988@gmail.com | cruzdigital.es\n\nDevuelve SOLO el código HTML, sin explicaciones."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [1340, 300],
+      "id": "node-gpt-reporte",
+      "name": "GPT Genera Reporte HTML",
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const content = $json.message && $json.message.content ? $json.message.content : '';\nconst html = content.replace(/^```html?\\n?/, '').replace(/\\n?```$/, '');\nconst metricas = $('Calcular Métricas de la Semana').first().json;\n\nreturn [{\n  json: {\n    email_destino: metricas.email_cliente,\n    asunto: `📊 Tu reporte semanal LeadPilot — ${metricas.contactados_esta_semana} negocios contactados esta semana`,\n    html_reporte: html,\n    cliente_nombre: metricas.cliente_nombre\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 300],
+      "id": "node-preparar-email",
+      "name": "Preparar Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email_destino }}",
+        "subject": "={{ $json.asunto }}",
+        "emailType": "html",
+        "message": "={{ $json.html_reporte }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1780, 300],
+      "id": "node-gmail",
+      "name": "Enviar Reporte por Gmail",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "59B2ehjmeBecNvB3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('Reporte enviado a: ' + $json.email_destino + ' para cliente: ' + $('Calcular Métricas de la Semana').first().json.cliente_nombre);\nreturn $input.all();",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 300],
+      "id": "node-log",
+      "name": "Log y Volver al Loop"
+    }
+  ],
+  "connections": {
+    "Schedule Viernes 17h": { "main": [[{ "node": "Leer Clientes Activos", "type": "main", "index": 0 }]] },
+    "Leer Clientes Activos": { "main": [[{ "node": "Loop Clientes", "type": "main", "index": 0 }]] },
+    "Loop Clientes": {
+      "main": [
+        [],
+        [{ "node": "Leer Todos los Leads del Cliente", "type": "main", "index": 0 }]
+      ]
+    },
+    "Leer Todos los Leads del Cliente": { "main": [[{ "node": "Calcular Métricas de la Semana", "type": "main", "index": 0 }]] },
+    "Calcular Métricas de la Semana": { "main": [[{ "node": "GPT Genera Reporte HTML", "type": "main", "index": 0 }]] },
+    "GPT Genera Reporte HTML": { "main": [[{ "node": "Preparar Email", "type": "main", "index": 0 }]] },
+    "Preparar Email": { "main": [[{ "node": "Enviar Reporte por Gmail", "type": "main", "index": 0 }]] },
+    "Enviar Reporte por Gmail": { "main": [[{ "node": "Log y Volver al Loop", "type": "main", "index": 0 }]] },
+    "Log y Volver al Loop": { "main": [[{ "node": "Loop Clientes", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}

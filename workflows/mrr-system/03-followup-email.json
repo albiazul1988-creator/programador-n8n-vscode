@@ -1,0 +1,316 @@
+{
+  "name": "MRR-03 Follow-up Email Multi-Cliente",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "id": "node-schedule-trigger",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "REEMPLAZAR_CON_ID_SHEET_CLIENTES_SERVICIO",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clientes",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "activo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 300],
+      "id": "node-leer-clientes",
+      "name": "Leer Clientes Activos",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": { "reset": false },
+        "batchSize": 1
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 300],
+      "id": "node-loop-clientes",
+      "name": "Loop Clientes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "v1", "name": "cliente_nombre", "value": "={{ $json.Nombre_Cliente }}", "type": "string" },
+            { "id": "v2", "name": "sheet_id_cliente", "value": "={{ $json.Sheet_ID }}", "type": "string" },
+            { "id": "v3", "name": "email_contacto", "value": "={{ $json.Email_Cliente }}", "type": "string" },
+            { "id": "v4", "name": "nombre_remitente", "value": "={{ $json.Nombre_Remitente || 'Juan' }}", "type": "string" }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [900, 300],
+      "id": "node-vars-cliente",
+      "name": "Variables del Cliente"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "getRows",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheet_id_cliente }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Estado",
+              "lookupValue": "Enviado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1120, 300],
+      "id": "node-leer-leads",
+      "name": "Leer Leads Enviados del Cliente",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const items = $input.all();\nconst vars = $('Variables del Cliente').first().json;\nconst now = new Date();\n\nconst pending = items.filter(item => {\n  const estado = (item.json['Estado'] || '').trim();\n  const fechaContacto = item.json['Fecha Contacto'] || '';\n  \n  if (estado !== 'Enviado') return false;\n  if (!fechaContacto) return false;\n  \n  const parts = fechaContacto.split('/');\n  if (parts.length !== 3) return false;\n  const sent = new Date(parts[2] + '-' + parts[1] + '-' + parts[0]);\n  const diffDays = (now - sent) / (1000 * 60 * 60 * 24);\n  return diffDays >= 3;\n});\n\nif (pending.length === 0) return [{ json: { noLeads: true, cliente_nombre: vars.cliente_nombre } }];\n\nreturn pending.map(item => ({\n  json: {\n    ...item.json,\n    cliente_nombre: vars.cliente_nombre,\n    sheet_id_cliente: vars.sheet_id_cliente,\n    nombre_remitente: vars.nombre_remitente\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300],
+      "id": "node-filtrar-leads",
+      "name": "Filtrar Leads +3 días sin respuesta"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "cond-no-leads",
+              "leftValue": "={{ $json.noLeads }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "notEquals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1560, 300],
+      "id": "node-if-hay-leads",
+      "name": "IF Hay Leads para Seguimiento"
+    },
+    {
+      "parameters": {
+        "options": { "reset": false },
+        "batchSize": 1
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1780, 200],
+      "id": "node-loop-leads",
+      "name": "Loop Leads"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "fields": {
+          "values": [
+            { "name": "negocio", "stringValue": "={{ $json['Negocio'] }}" },
+            { "name": "telefono", "stringValue": "={{ $json['Telefono'] }}" },
+            { "name": "propuesta_original", "stringValue": "={{ $json['Propuesta'] }}" },
+            { "name": "fecha_contacto", "stringValue": "={{ $json['Fecha Contacto'] }}" },
+            { "name": "tipo_negocio", "stringValue": "={{ $json['Tipo'] }}" },
+            { "name": "sheet_id_cliente", "stringValue": "={{ $json['sheet_id_cliente'] }}" },
+            { "name": "nombre_remitente", "stringValue": "={{ $json['nombre_remitente'] }}" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2000, 200],
+      "id": "node-preparar-datos",
+      "name": "Preparar Datos Lead"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.4,
+          "maxTokens": 1000
+        },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres un experto en ventas B2B con 15 años de experiencia cerrando contratos con pequeños comercios y pymes en España. Tu especialidad es escribir mensajes de seguimiento por WhatsApp que consiguen respuesta sin ser pesados.\n\nReglas de oro:\n1. Máximo 4 líneas\n2. Tono natural, cercano, como si lo escribiera una persona real\n3. Referencia el primer contacto de forma natural\n4. Añade un beneficio o dato nuevo\n5. Termina con pregunta fácil de responder (sí/no)\n6. Escribe en español de España"
+            },
+            {
+              "role": "user",
+              "content": "=Datos del negocio:\n- Nombre: {{ $json.negocio }}\n- Tipo: {{ $json.tipo_negocio }}\n- Fecha primer contacto: {{ $json.fecha_contacto }}\n- Mensaje original enviado: {{ $json.propuesta_original }}\n- Remitente: {{ $json.nombre_remitente }} de Cruz Digital\n\nEscribe un mensaje de seguimiento por WhatsApp. Corto (4 líneas max), directo, con pregunta final."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [2220, 200],
+      "id": "node-gpt4o-followup",
+      "name": "GPT-4o Genera Follow-up",
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://waha.cruzn8n.com/api/sendText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Api-Key", "value": "e17750b41d694bd788f1e40bbc5b1363" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "session", "value": "default" },
+            { "name": "chatId", "value": "={{ ($('Preparar Datos Lead').item.json.telefono.replace(/[^0-9]/g, '').startsWith('34') ? $('Preparar Datos Lead').item.json.telefono.replace(/[^0-9]/g, '') : '34' + $('Preparar Datos Lead').item.json.telefono.replace(/[^0-9]/g, '')) + '@c.us' }}" },
+            { "name": "text", "value": "={{ $json.message.content }}" }
+          ]
+        },
+        "options": {
+          "batching": { "batch": { "batchSize": 1, "batchInterval": 3000 } }
+        }
+      },
+      "id": "node-waha-followup",
+      "name": "Enviar Follow-up WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Preparar Datos Lead').item.json.sheet_id_cliente }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Estado": "Seguimiento enviado",
+            "Fecha Seguimiento": "={{ $now.toFormat('dd/MM/yyyy') }}"
+          },
+          "matchingColumns": ["Negocio"]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2660, 200],
+      "id": "node-actualizar-estado",
+      "name": "Actualizar Estado Lead",
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Leer Clientes Activos", "type": "main", "index": 0 }]] },
+    "Leer Clientes Activos": { "main": [[{ "node": "Loop Clientes", "type": "main", "index": 0 }]] },
+    "Loop Clientes": {
+      "main": [
+        [],
+        [{ "node": "Variables del Cliente", "type": "main", "index": 0 }]
+      ]
+    },
+    "Variables del Cliente": { "main": [[{ "node": "Leer Leads Enviados del Cliente", "type": "main", "index": 0 }]] },
+    "Leer Leads Enviados del Cliente": { "main": [[{ "node": "Filtrar Leads +3 días sin respuesta", "type": "main", "index": 0 }]] },
+    "Filtrar Leads +3 días sin respuesta": { "main": [[{ "node": "IF Hay Leads para Seguimiento", "type": "main", "index": 0 }]] },
+    "IF Hay Leads para Seguimiento": {
+      "main": [
+        [{ "node": "Loop Leads", "type": "main", "index": 0 }],
+        [{ "node": "Loop Clientes", "type": "main", "index": 0 }]
+      ]
+    },
+    "Loop Leads": {
+      "main": [
+        [{ "node": "Loop Clientes", "type": "main", "index": 0 }],
+        [{ "node": "Preparar Datos Lead", "type": "main", "index": 0 }]
+      ]
+    },
+    "Preparar Datos Lead": { "main": [[{ "node": "GPT-4o Genera Follow-up", "type": "main", "index": 0 }]] },
+    "GPT-4o Genera Follow-up": { "main": [[{ "node": "Enviar Follow-up WhatsApp", "type": "main", "index": 0 }]] },
+    "Enviar Follow-up WhatsApp": { "main": [[{ "node": "Actualizar Estado Lead", "type": "main", "index": 0 }]] },
+    "Actualizar Estado Lead": { "main": [[{ "node": "Loop Leads", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}

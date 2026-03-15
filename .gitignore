@@ -1,6 +1,21 @@
 node_modules/
 *.env
 .env
-czlonkowski-n8n-mcp/node_modules/
-n8n-mcp-server/node_modules/
-n8n-mcp/node_modules/
+
+# Servidores MCP (herramientas instaladas, no son código del proyecto)
+czlonkowski-n8n-mcp/
+n8n-mcp-server/
+n8n-mcp/
+n8n-skills/
+
+# Archivos temporales de trabajo
+tmp_*.json
+*.tmp
+
+# Archivos de debug/test temporales
+exec_*.json
+wf_current.json
+wf_fresh.json
+wf_latest.json
+wf_fix.json
+wf_email_scraper*.json

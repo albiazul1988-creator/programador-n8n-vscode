@@ -1,0 +1,170 @@
+{
+  "name": "MRR-05 Onboarding Nuevo Cliente",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mrr-onboarding",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "node_webhook",
+      "name": "Webhook Onboarding",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "mrr-onboarding-v1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "v1", "name": "cliente_nombre", "value": "={{ $json.body.cliente_nombre }}", "type": "string" },
+            { "id": "v2", "name": "email_cliente", "value": "={{ $json.body.email_cliente }}", "type": "string" },
+            { "id": "v3", "name": "plan", "value": "={{ $json.body.plan || 'Starter' }}", "type": "string" },
+            { "id": "v4", "name": "ciudad", "value": "={{ $json.body.ciudad }}", "type": "string" },
+            { "id": "v5", "name": "categorias", "value": "={{ $json.body.categorias }}", "type": "string" },
+            { "id": "v6", "name": "nombre_remitente", "value": "={{ $json.body.nombre_remitente || 'Juan' }}", "type": "string" },
+            { "id": "v7", "name": "sheet_id_maestro", "value": "REEMPLAZAR_CON_ID_SHEET_CLIENTES_SERVICIO", "type": "string" },
+            { "id": "v8", "name": "limite_semanal", "value": "={{ $json.body.plan === 'Pro' ? 200 : ($json.body.plan === 'Agency' ? 500 : 50) }}", "type": "number" },
+            { "id": "v9", "name": "fecha_inicio", "value": "={{ $now.format('dd/MM/yyyy') }}", "type": "string" }
+          ]
+        }
+      },
+      "id": "node_vars",
+      "name": "Extraer Variables",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "options": { "temperature": 0.4, "maxTokens": 1500 },
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Eres un experto en onboarding de clientes SaaS. Escribes emails de bienvenida cálidos, profesionales y que generan confianza. El tono es cercano pero profesional. Siempre en español de España."
+            },
+            {
+              "role": "user",
+              "content": "=Genera un email de bienvenida HTML para un nuevo cliente de LeadPilot:\n\nCliente: {{ $json.cliente_nombre }}\nEmail: {{ $json.email_cliente }}\nPlan contratado: {{ $json.plan }}\nCiudad objetivo: {{ $json.ciudad }}\nSectores: {{ $json.categorias }}\nContactos semanales incluidos: {{ $json.limite_semanal }}\nFecha de inicio: {{ $json.fecha_inicio }}\n\nEl email debe incluir:\n1. Bienvenida cálida y personalizada\n2. Resumen de lo que recibirá (prospección automática, propuestas WhatsApp, seguimientos, reporte semanal)\n3. Calendario de entrega: cuándo recibirá los primeros resultados (lunes de la semana siguiente)\n4. Próximos pasos claros:\n   - El equipo configurará su campaña en 24h\n   - Recibirá acceso a su Google Sheet de leads\n   - Primer reporte el próximo viernes\n5. Datos de contacto: albiazul1988@gmail.com | Cruz Digital\n\nDiseño HTML: profesional, azul oscuro #0f2744, fondo blanco, fuente Arial. Devuelve SOLO el HTML."
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [680, 300],
+      "id": "node-gpt-bienvenida",
+      "name": "GPT Genera Email Bienvenida",
+      "credentials": {
+        "openAiApi": {
+          "id": "J5R3ZPqbuovo4Ntf",
+          "name": "Mi OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const content = $json.message && $json.message.content ? $json.message.content : '';\nconst html = content.replace(/^```html?\\n?/, '').replace(/\\n?```$/, '');\nconst vars = $('Extraer Variables').first().json;\n\nreturn [{\n  json: {\n    ...vars,\n    html_bienvenida: html\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "id": "node-preparar",
+      "name": "Preparar Datos para Guardar"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email_cliente }}",
+        "subject": "Bienvenido a LeadPilot — Tu sistema de captación automática ya está en marcha",
+        "emailType": "html",
+        "message": "={{ $json.html_bienvenida }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1120, 200],
+      "id": "node-gmail-bienvenida",
+      "name": "Enviar Email Bienvenida",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "59B2ehjmeBecNvB3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.sheet_id_maestro }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Clientes",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre_Cliente": "={{ $json.cliente_nombre }}",
+            "Email_Cliente": "={{ $json.email_cliente }}",
+            "Plan": "={{ $json.plan }}",
+            "Ciudad": "={{ $json.ciudad }}",
+            "Categorias": "={{ $json.categorias }}",
+            "Nombre_Remitente": "={{ $json.nombre_remitente }}",
+            "Estado": "activo",
+            "Fecha_Inicio": "={{ $json.fecha_inicio }}",
+            "Limite_Semanal": "={{ $json.limite_semanal }}",
+            "Sheet_ID": "PENDIENTE_CREAR_SHEET_LEADS"
+          }
+        },
+        "options": {}
+      },
+      "id": "node-guardar-cliente",
+      "name": "Registrar Cliente en Sheet Maestro",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1120, 420],
+      "credentials": {
+        "googleApi": {
+          "id": "2HXeFPNm7caBE67G",
+          "name": "Google Sheets Service Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const vars = $('Extraer Variables').first().json;\nconsole.log('=== NUEVO CLIENTE ONBOARDING ===');\nconsole.log('Cliente: ' + vars.cliente_nombre);\nconsole.log('Plan: ' + vars.plan);\nconsole.log('Ciudad: ' + vars.ciudad);\nconsole.log('Email bienvenida enviado a: ' + vars.email_cliente);\nconsole.log('ACCION MANUAL REQUERIDA: Crear Google Sheet para LEADS_' + vars.cliente_nombre + ' y actualizar Sheet_ID en CLIENTES_SERVICIO');\nreturn [{\n  json: {\n    status: 'onboarding_completado',\n    cliente: vars.cliente_nombre,\n    mensaje: 'Email de bienvenida enviado. Acción manual: crear sheet LEADS_' + vars.cliente_nombre + ' y actualizar Sheet_ID.',\n    siguiente_paso: 'Crear Google Sheet vacío con columnas: Negocio, Telefono, Direccion, Google Maps, Rating, Tipo, Tiene Web, Fecha Contacto, Estado, Propuesta, Fecha Seguimiento'\n  }\n}];",
+        "mode": "runOnceForAllItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300],
+      "id": "node-log-final",
+      "name": "Log Onboarding Completado"
+    }
+  ],
+  "connections": {
+    "Webhook Onboarding": { "main": [[{ "node": "Extraer Variables", "type": "main", "index": 0 }]] },
+    "Extraer Variables": { "main": [[{ "node": "GPT Genera Email Bienvenida", "type": "main", "index": 0 }]] },
+    "GPT Genera Email Bienvenida": { "main": [[{ "node": "Preparar Datos para Guardar", "type": "main", "index": 0 }]] },
+    "Preparar Datos para Guardar": {
+      "main": [
+        [
+          { "node": "Enviar Email Bienvenida", "type": "main", "index": 0 },
+          { "node": "Registrar Cliente en Sheet Maestro", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Enviar Email Bienvenida": { "main": [[{ "node": "Log Onboarding Completado", "type": "main", "index": 0 }]] },
+    "Registrar Cliente en Sheet Maestro": { "main": [[{ "node": "Log Onboarding Completado", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "saveManualExecutions": true }
+}
