@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{NOMBRE_NEGOCIO}} — {{TIPO_NEGOCIO}} en {{CIUDAD}}</title>
+  <meta name="description" content="{{DESCRIPCION}}" />
+  <meta property="og:title" content="{{NOMBRE_NEGOCIO}} — {{TIPO_NEGOCIO}} en {{CIUDAD}}" />
+  <meta property="og:description" content="{{DESCRIPCION}}" />
+  <meta property="og:image" content="{{FOTO_1}}" />
+  <link rel="canonical" href="https://cruzdigital.es/negocios/{{SLUG}}" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:   '#111827',
+            orange: '#f97316',
+            blue:   '#3b82f6',
+            dark:   '#0d1117',
+            card:   '#1f2937',
+            border: '#374151',
+          },
+          fontFamily: {
+            bebas: ['"Bebas Neue"', 'cursive'],
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ───── Base ───── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #111827;
+      color: #f9fafb;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ───── Typography helpers ───── */
+    .font-bebas { font-family: 'Bebas Neue', cursive; }
+
+    /* ───── Orange gradient utilities ───── */
+    .bg-orange-grad {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+    .text-orange { color: #f97316; }
+    .border-orange { border-color: #f97316; }
+
+    /* ───── Navbar ───── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 9999;
+      background: rgba(13, 17, 23, 0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(249, 115, 22, 0.3);
+      transition: box-shadow 0.3s;
+    }
+    #navbar.scrolled { box-shadow: 0 2px 30px rgba(249, 115, 22, 0.15); }
+
+    /* ───── Mobile menu ───── */
+    #mobile-menu {
+      display: none;
+      background: #0d1117;
+      border-top: 1px solid #374151;
+    }
+    #mobile-menu.open { display: block; }
+
+    /* ───── Hero split ───── */
+    #hero { min-height: 100vh; padding-top: 72px; }
+    .hero-img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-img-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(249,115,22,0.35) 0%, rgba(234,88,12,0.15) 100%);
+      pointer-events: none;
+    }
+    .hero-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ───── Star rating ───── */
+    .stars { color: #fbbf24; letter-spacing: 2px; }
+
+    /* ───── Trust bar ───── */
+    #trust-bar {
+      background: linear-gradient(90deg, #1f2937 0%, #111827 50%, #1f2937 100%);
+      border-top: 2px solid #f97316;
+      border-bottom: 1px solid #374151;
+    }
+
+    /* ───── Section heading accent ───── */
+    .section-tag {
+      display: inline-block;
+      background: rgba(249,115,22,0.15);
+      color: #f97316;
+      border: 1px solid rgba(249,115,22,0.35);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    /* ───── Cards ───── */
+    .servicio-card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 24px 20px;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      cursor: default;
+    }
+    .servicio-card:hover {
+      border-color: #f97316;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(249,115,22,0.15);
+    }
+
+    .why-card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 14px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .why-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 8px 30px rgba(59,130,246,0.12);
+    }
+
+    /* ───── Gallery ───── */
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      aspect-ratio: 4/3;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+      display: block;
+    }
+    .gallery-item:hover img { transform: scale(1.07); }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(249,115,22,0.7) 100%);
+      opacity: 0;
+      transition: opacity 0.35s;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+    /* ───── Testimonials ───── */
+    .review-card {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 14px;
+      padding: 28px 24px;
+      position: relative;
+    }
+    .review-card::before {
+      content: '"';
+      position: absolute;
+      top: 10px; left: 18px;
+      font-size: 4rem;
+      color: rgba(249,115,22,0.2);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    /* ───── Map section ───── */
+    .map-iframe {
+      width: 100%;
+      height: 340px;
+      border: none;
+      border-radius: 12px;
+      filter: grayscale(0.2) contrast(1.05);
+    }
+
+    /* ───── Emergency CTA ───── */
+    #emergency {
+      background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    #emergency::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+      top: -200px; right: -150px;
+      pointer-events: none;
+    }
+
+    /* ───── Phone pulse button ───── */
+    .btn-call {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #f97316;
+      color: #fff;
+      font-weight: 800;
+      border-radius: 8px;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(249,115,22,0.45);
+      white-space: nowrap;
+    }
+    .btn-call:hover {
+      background: #ea580c;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(249,115,22,0.55);
+    }
+    .btn-call-white {
+      background: #fff;
+      color: #ea580c;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    }
+    .btn-call-white:hover { background: #fef3c7; }
+
+    /* ───── WhatsApp floating ───── */
+    #wa-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9998;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #25d366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 24px rgba(37,211,102,0.5);
+      text-decoration: none;
+      animation: wa-pulse 2.4s ease-in-out infinite;
+      transition: transform 0.2s;
+    }
+    #wa-btn:hover { transform: scale(1.1); animation: none; }
+    @keyframes wa-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.55); }
+      50%       { box-shadow: 0 0 0 16px rgba(37,211,102,0); }
+    }
+
+    /* ───── Scroll reveal ───── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ───── Horarios ───── */
+    .horarios-block { white-space: pre-line; }
+
+    /* ───── Badge ───── */
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(249,115,22,0.08);
+      border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .trust-badge-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      background: rgba(249,115,22,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    /* ───── Divider ───── */
+    .divider-orange {
+      width: 60px;
+      height: 4px;
+      background: #f97316;
+      border-radius: 2px;
+      margin: 14px 0 24px;
+    }
+
+    /* ───── Footer ───── */
+    #footer {
+      background: #0d1117;
+      border-top: 1px solid #374151;
+    }
+
+    /* ───── Responsive helpers ───── */
+    @media (max-width: 768px) {
+      #hero .hero-grid {
+        flex-direction: column;
+      }
+      .hero-img-wrap { height: 280px; }
+      .phone-hero { font-size: 2rem !important; }
+    }
+  </style>
+</head>
+<body class="bg-navy text-gray-100 font-inter antialiased">
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-[72px]">
+
+    <!-- Logo / Name -->
+    <a href="#" class="flex items-center gap-3 no-underline">
+      <span class="bg-orange-grad p-[6px] rounded-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.654-4.654m5.65-4.656 4.654-5.653a2.548 2.548 0 0 1 3.586 3.586l-5.654 4.655" />
+        </svg>
+      </span>
+      <span class="font-bebas text-xl tracking-widest text-white leading-none">{{NOMBRE_NEGOCIO}}</span>
+    </a>
+
+    <!-- Desktop nav links -->
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-300">
+      <a href="#servicios" class="hover:text-orange transition-colors">Servicios</a>
+      <a href="#nosotros" class="hover:text-orange transition-colors">Nosotros</a>
+      <a href="#galeria" class="hover:text-orange transition-colors">Galería</a>
+      <a href="#ubicacion" class="hover:text-orange transition-colors">Ubicación</a>
+      <a href="#contacto" class="hover:text-orange transition-colors">Contacto</a>
+    </div>
+
+    <!-- CTA phone button (desktop) -->
+    <a href="tel:{{TELEFONO}}" class="hidden md:flex btn-call text-sm py-3 px-5">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 6a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/>
+      </svg>
+      LLAMAR AHORA
+    </a>
+
+    <!-- Mobile hamburger -->
+    <button id="menu-toggle" class="md:hidden p-2 rounded-lg border border-gray-700 text-gray-300 hover:border-orange hover:text-orange transition-colors" aria-label="Abrir menú">
+      <svg id="icon-open"  class="w-6 h-6 block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div id="mobile-menu">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-2 text-sm font-medium">
+      <a href="#servicios" class="py-2 px-3 rounded-lg hover:bg-card text-gray-300 hover:text-orange transition-colors">Servicios</a>
+      <a href="#nosotros"  class="py-2 px-3 rounded-lg hover:bg-card text-gray-300 hover:text-orange transition-colors">Nosotros</a>
+      <a href="#galeria"   class="py-2 px-3 rounded-lg hover:bg-card text-gray-300 hover:text-orange transition-colors">Galería</a>
+      <a href="#ubicacion" class="py-2 px-3 rounded-lg hover:bg-card text-gray-300 hover:text-orange transition-colors">Ubicación</a>
+      <a href="#contacto"  class="py-2 px-3 rounded-lg hover:bg-card text-gray-300 hover:text-orange transition-colors">Contacto</a>
+      <a href="tel:{{TELEFONO}}" class="btn-call mt-2 justify-center">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 6a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/></svg>
+        LLAMAR AHORA — {{TELEFONO}}
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════
+     HERO — split layout
+═══════════════════════════════════════════ -->
+<section id="hero" class="flex items-stretch min-h-screen">
+  <div class="w-full flex flex-col lg:flex-row">
+
+    <!-- LEFT: copy -->
+    <div class="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 lg:py-24 bg-dark">
+      <div class="reveal-left max-w-xl">
+        <span class="section-tag">{{TIPO_NEGOCIO}} · {{CIUDAD}}</span>
+
+        <h1 class="font-bebas text-6xl sm:text-7xl lg:text-8xl leading-none mt-2 text-white">
+          TU PROBLEMA,<br />
+          <span class="text-orange">NUESTRA<br />SOLUCIÓN</span>
+        </h1>
+
+        <p class="mt-6 text-gray-400 text-lg leading-relaxed max-w-md">
+          {{DESCRIPCION}}
+        </p>
+
+        <!-- Phone CTA -->
+        <a href="tel:{{TELEFONO}}" class="btn-call mt-8 text-xl py-5 px-8 phone-hero self-start">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 6a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/></svg>
+          {{TELEFONO}}
+        </a>
+        <p class="mt-3 text-sm text-gray-500">Sin compromiso · Respuesta inmediata</p>
+
+        <!-- Quick badges -->
+        <div class="mt-8 flex flex-wrap gap-3">
+          <span class="flex items-center gap-2 text-sm text-green-400 border border-green-800 rounded-full px-4 py-1.5">
+            <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block"></span>Disponible ahora
+          </span>
+          <span class="flex items-center gap-2 text-sm text-gray-300 border border-gray-700 rounded-full px-4 py-1.5">
+            ⭐ {{RATING}} · {{TOTAL_REVIEWS}} reseñas
+          </span>
+          <span class="flex items-center gap-2 text-sm text-gray-300 border border-gray-700 rounded-full px-4 py-1.5">
+            📍 {{CIUDAD}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: photo -->
+    <div class="flex-1 hero-img-wrap reveal-right min-h-[360px] lg:min-h-0">
+      <img src="{{FOTO_1}}" alt="{{NOMBRE_NEGOCIO}} en {{CIUDAD}}" loading="eager" />
+      <!-- Orange bar accent -->
+      <div class="absolute top-0 left-0 w-1 h-full bg-orange-grad z-10"></div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TRUST BAR
+═══════════════════════════════════════════ -->
+<section id="trust-bar">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+
+      <!-- Rating -->
+      <div class="flex items-center gap-3">
+        <div class="text-3xl font-bebas text-orange leading-none">{{RATING}}</div>
+        <div>
+          <div class="stars text-lg">★★★★★</div>
+          <p class="text-xs text-gray-400 mt-0.5">{{TOTAL_REVIEWS}} reseñas</p>
+        </div>
+      </div>
+
+      <!-- Presupuesto gratis -->
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">💰</span>
+        <div>
+          <p class="font-semibold text-white text-sm leading-tight">Presupuesto</p>
+          <p class="text-orange font-bold text-sm">GRATIS</p>
+        </div>
+      </div>
+
+      <!-- Respuesta 24h -->
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">⚡</span>
+        <div>
+          <p class="font-semibold text-white text-sm leading-tight">Respuesta</p>
+          <p class="text-orange font-bold text-sm">EN 24H</p>
+        </div>
+      </div>
+
+      <!-- Profesionales -->
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🛡️</span>
+        <div>
+          <p class="font-semibold text-white text-sm leading-tight">Trabajo</p>
+          <p class="text-orange font-bold text-sm">GARANTIZADO</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     ABOUT / NOSOTROS
+═══════════════════════════════════════════ -->
+<section id="nosotros" class="py-20 sm:py-28">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+      <!-- Photo -->
+      <div class="reveal-left relative">
+        <div class="rounded-xl overflow-hidden">
+          <img src="{{FOTO_2}}" alt="Equipo de {{NOMBRE_NEGOCIO}}" class="w-full h-80 lg:h-[460px] object-cover" />
+        </div>
+        <!-- Decorative orange corner -->
+        <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-orange-grad rounded-xl -z-10 opacity-60"></div>
+        <!-- Years badge -->
+        <div class="absolute -top-5 -left-5 bg-orange-grad text-white rounded-xl p-4 text-center shadow-2xl">
+          <p class="font-bebas text-4xl leading-none">+10</p>
+          <p class="text-xs font-semibold leading-tight mt-1">AÑOS DE<br />EXPERIENCIA</p>
+        </div>
+      </div>
+
+      <!-- Copy -->
+      <div class="reveal-right">
+        <span class="section-tag">Sobre nosotros</span>
+        <h2 class="font-bebas text-5xl sm:text-6xl text-white mt-2 leading-tight">
+          PROFESIONALES<br />DE CONFIANZA<br />EN <span class="text-orange">{{CIUDAD}}</span>
+        </h2>
+        <div class="divider-orange"></div>
+        <p class="text-gray-400 text-base leading-relaxed">
+          {{DESCRIPCION}}
+        </p>
+
+        <!-- Trust badges -->
+        <div class="mt-8 flex flex-col gap-3">
+          <div class="trust-badge">
+            <div class="trust-badge-icon">🏆</div>
+            <div>
+              <p class="font-semibold text-white text-sm">Profesionales certificados</p>
+              <p class="text-gray-400 text-xs mt-0.5">Con formación y experiencia acreditada</p>
+            </div>
+          </div>
+          <div class="trust-badge">
+            <div class="trust-badge-icon">📋</div>
+            <div>
+              <p class="font-semibold text-white text-sm">Presupuesto transparente</p>
+              <p class="text-gray-400 text-xs mt-0.5">Sin sorpresas ni costes ocultos</p>
+            </div>
+          </div>
+          <div class="trust-badge">
+            <div class="trust-badge-icon">✅</div>
+            <div>
+              <p class="font-semibold text-white text-sm">Garantía en todos los trabajos</p>
+              <p class="text-gray-400 text-xs mt-0.5">Tu satisfacción, nuestra prioridad</p>
+            </div>
+          </div>
+        </div>
+
+        <a href="tel:{{TELEFONO}}" class="btn-call mt-8 inline-flex">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 6a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/></svg>
+          Llámanos: {{TELEFONO}}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     SERVICIOS
+═══════════════════════════════════════════ -->
+<section id="servicios" class="py-20 sm:py-28 bg-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14 reveal">
+      <span class="section-tag">Lo que hacemos</span>
+      <h2 class="font-bebas text-5xl sm:text-6xl text-white mt-2">
+        NUESTROS <span class="text-orange">SERVICIOS</span>
+      </h2>
+      <div class="divider-orange mx-auto"></div>
+      <p class="text-gray-400 max-w-xl mx-auto">Soluciones profesionales para todas tus necesidades en {{CIUDAD}} y alrededores.</p>
+    </div>
+
+    <!-- Servicios grid — injected by {{SERVICIOS_HTML}} inside this wrapper -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal" id="servicios-grid">
+      {{SERVICIOS_HTML}}
+    </div>
+
+    <div class="text-center mt-12 reveal">
+      <p class="text-gray-400 mb-4">¿No encuentras lo que necesitas? Llámanos y lo solucionamos.</p>
+      <a href="tel:{{TELEFONO}}" class="btn-call text-lg py-4 px-8">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 6a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/></svg>
+        Consulta sin coste: {{TELEFONO}}
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     WHY US
+═══════════════════════════════════════════ -->
+<section id="por-que" class="py-20 sm:py-28">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14 reveal">
+      <span class="section-tag">¿Por qué elegirnos?</span>
+      <h2 class="font-bebas text-5xl sm:text-6xl text-white mt-2">
+        LA DIFERENCIA ES <span class="text-orange">CLARA</span>
+      </h2>
+      <div class="divider-orange mx-auto"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+      <div class="why-card reveal" style="transition-delay:0ms">
+        <div class="text-5xl mb-4">🔧</div>
+        <h3 class="font-bebas text-2xl text-white mb-2">EXPERIENCIA</h3>
+        <p class="text-gray-400 text-sm">Más de 10 años resolviendo problemas en {{CIUDAD}}. Conocemos cada rincón.</p>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:80ms">
+        <div class="text-5xl mb-4">🛡️</div>
+        <h3 class="font-bebas text-2xl text-white mb-2">GARANTÍA</h3>
+        <p class="text-gray-400 text-sm">Todo trabajo incluye garantía escrita. Si algo falla, volvemos sin coste adicional.</p>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:160ms">
+        <div class="text-5xl mb-4">⚡</div>
+        <h3 class="font-bebas text-2xl text-white mb-2">RAPIDEZ</h3>
+        <p class="text-gray-400 text-sm">Atención el mismo día en urgencias. Respuesta en menos de 24 horas garantizada.</p>
+      </div>
+
+      <div class="why-card reveal" style="transition-delay:240ms">
+        <div class="text-5xl mb-4">💶</div>
+        <h3 class="font-bebas text-2xl text-white mb-2">PRECIO JUSTO</h3>
+        <p class="text-gray-400 text-sm">Presupuesto gratuito y sin compromiso. Tarifas claras, sin letra pequeña.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     GALLERY
+═══════════════════════════════════════════ -->
+<section id="galeria" class="py-20 sm:py-28 bg-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14 reveal">
+      <span class="section-tag">Nuestros trabajos</span>
+      <h2 class="font-bebas text-5xl sm:text-6xl text-white mt-2">
+        GALERÍA DE <span class="text-orange">PROYECTOS</span>
+      </h2>
+      <div class="divider-orange mx-auto"></div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 reveal">
+
+      <!-- Big feature photo -->
+      <div class="gallery-item col-span-2 lg:col-span-2 row-span-1">
+        <img src="{{FOTO_1}}" alt="Trabajo 1 — {{NOMBRE_NEGOCIO}}" />
+        <div class="gallery-overlay">
+          <span class="text-white font-semibold text-sm">{{NOMBRE_NEGOCIO}}</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="{{FOTO_3}}" alt="Trabajo 3 — {{NOMBRE_NEGOCIO}}" />
+        <div class="gallery-overlay">
+          <span class="text-white font-semibold text-sm">{{TIPO_NEGOCIO}}</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="{{FOTO_4}}" alt="Trabajo 4 — {{NOMBRE_NEGOCIO}}" />
+        <div class="gallery-overlay">
+          <span class="text-white font-semibold text-sm">{{CIUDAD}}</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="{{FOTO_2}}" alt="Trabajo 2 — {{NOMBRE_NEGOCIO}}" />
+        <div class="gallery-overlay">
+          <span class="text-white font-semibold text-sm">Calidad garantizada</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="{{FOTO_5}}" alt="Trabajo 5 — {{NOMBRE_NEGOCIO}}" />
+        <div class="gallery-overlay">
+          <span class="text-white font-semibold text-sm">Profesionales</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     TESTIMONIALS / REVIEWS
+═══════════════════════════════════════════ -->
+<section id="opiniones" class="py-20 sm:py-28">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14 reveal">
+      <span class="section-tag">Opiniones reales de Google</span>
+      <h2 class="font-bebas text-5xl sm:text-6xl text-white mt-2">
+        LO QUE DICEN <span class="text-orange">NUESTROS CLIENTES</span>
+      </h2>
+      <div class="divider-orange mx-auto"></div>
+      <div class="flex items-center justify-center gap-3 mt-2">
+        <span class="font-bebas text-4xl text-orange">{{RATING}}</span>
+        <div>
+          <div class="stars text-xl">★★★★★</div>
+          <p class="text-xs text-gray-400">{{TOTAL_REVIEWS}} opiniones verificadas</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+
+      <div class="review-card">
+        <div class="stars text-sm mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed pt-4">
+          "Muy profesionales y rápidos. Vinieron el mismo día y dejaron todo perfecto. Muy recomendables, sin duda."
+        </p>
+        <div class="mt-4 flex items-center gap-2 border-t border-gray-700 pt-4">
+          <div class="w-8 h-8 rounded-full bg-orange-grad flex items-center justify-center text-white font-bold text-sm">M</div>
+          <div>
+            <p class="text-white text-xs font-semibold">María G.</p>
+            <p class="text-gray-500 text-xs">Cliente verificada · Google</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars text-sm mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed pt-4">
+          "Presupuesto justo, trabajo impecable y atención excelente. Son los que llamo siempre para cualquier problema."
+        </p>
+        <div class="mt-4 flex items-center gap-2 border-t border-gray-700 pt-4">
+          <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">J</div>
+          <div>
+            <p class="text-white text-xs font-semibold">Javier R.</p>
+            <p class="text-gray-500 text-xs">Cliente verificado · Google</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="stars text-sm mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed pt-4">
+          "Llamé por urgencia y en dos horas ya estaban aquí. Resolvieron el problema rápido y a buen precio. 10/10."
+        </p>
+        <div class="mt-4 flex items-center gap-2 border-t border-gray-700 pt-4">
+          <div class="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center text-white font-bold text-sm">A</div>
+          <div>
+            <p class="text-white text-xs font-semibold">Ana M.</p>
+            <p class="text-gray-500 text-xs">Cliente verificada · Google</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Google badge -->
+    <div class="text-center mt-10 reveal">
+      <a href="#" class="inline-flex items-center gap-2 text-sm text-gray-400 border border-gray-700 rounded-full px-5 py-2.5 hover:border-orange hover:text-orange transition-colors">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Ver todas las opiniones en Google Maps
+      </a>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     LOCATION + HOURS
+═══════════════════════════════════════════ -->
+<section id="ubicacion" class="py-20 sm:py-28 bg-dark">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14 reveal">
+      <span class="section-tag">Dónde estamos</span>
+      <h2 class="font-bebas text-5xl sm:text-6xl text-white mt-2">
+        UBICACIÓN Y <span class="text-orange">HORARIOS</span>
+      </h2>
+      <div class="divider-orange mx-auto"></div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-8 reveal">
+
+      <!-- Map -->
+      <div>
+        <iframe
+          src="{{MAPS_EMBED}}"
+          class="map-iframe"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Mapa de {{NOMBRE_NEGOCIO}}">
+        </iframe>
+      </div>
+
+      <!-- Info cards -->
+      <div class="flex flex-col gap-4">
+
+        <div class="bg-card border border-border rounded-xl p-5">
+          <div class="flex items-start gap-4">
+            <span class="text-3xl mt-1">📍</span>
+            <div>
+              <p class="font-semibold text-white mb-1">Dirección</p>
+              <p class="text-gray-400 text-sm">{{DIRECCION}}</p>
+              <p class="text-gray-400 text-sm">{{CIUDAD}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5">
+          <div class="flex items-start gap-4">
+            <span class="text-3xl mt-1">📞</span>
+            <div>
+              <p class="font-semibold text-white mb-1">Teléfono</p>
+              <a href="tel:{{TELEFONO}}" class="text-orange font-bold text-xl hover:text-amber-400 transition-colors">
+                {{TELEFONO}}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-card border border-border rounded-xl p-5">
+          <div class="flex items-start gap-4">
+            <span class="text-3xl mt-1">🕐</span>
+            <div class="flex-1">
+              <p class="font-semibold text-white mb-2">Horarios de atención</p>
+              <div class="text-gray-400 text-sm horarios-block leading-relaxed">{{HORARIOS_HTML}}</div>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener noreferrer"
+           class="flex items-center justify-center gap-3 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-xl py-4 px-6 transition-colors">
+          <svg class="w-6 h-6" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16a15.93 15.93 0 0 0 2.14 8.017L0 32l8.224-2.107A15.944 15.944 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.065 22.382c-.335.943-1.958 1.8-2.7 1.913-.69.105-1.56.15-2.51-.158-.578-.19-1.32-.443-2.27-.868-3.99-1.725-6.596-5.717-6.794-5.98-.198-.263-1.616-2.148-1.616-4.097 0-1.95 1.022-2.91 1.383-3.307.362-.397.791-.496 1.055-.496.264 0 .528.003.758.014.243.012.57-.092.893.681.335.793 1.14 2.745 1.239 2.943.099.198.165.43.033.693-.132.263-.198.429-.396.661-.198.231-.416.517-.594.694-.198.198-.404.413-.173.81.231.396 1.025 1.691 2.2 2.739 1.51 1.345 2.783 1.763 3.18 1.961.396.198.627.165.858-.099.231-.264.99-1.155 1.254-1.551.264-.396.528-.33.891-.198.363.132 2.31 1.089 2.706 1.287.396.198.66.297.759.462.099.165.099.96-.236 1.896z"/></svg>
+          Escribir por WhatsApp
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     EMERGENCY CTA
+═══════════════════════════════════════════ -->
+<section id="contacto" id="emergency">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-24 text-center relative z-10 reveal">
+
+    <span class="inline-block bg-white/10 text-white text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-6">
+      URGENCIA 24H
+    </span>
+
+    <h2 class="font-bebas text-6xl sm:text-7xl lg:text-8xl text-white leading-none">
+      ¿URGENCIA?<br />
+      <span class="text-yellow-300">LLÁMANOS AHORA</span>
+    </h2>
+
+    <p class="mt-6 text-white/80 text-xl max-w-xl mx-auto">
+      Atendemos emergencias el mismo día. Nuestro equipo está listo para resolver tu problema en {{CIUDAD}}.
+    </p>
+
+    <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <a href="tel:{{TELEFONO}}" class="btn-call btn-call-white text-2xl py-5 px-10">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C9.61 21 3 14.39 3 6a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2z"/></svg>
+        {{TELEFONO}}
+      </a>
+      <a href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener noreferrer"
+         class="flex items-center gap-3 bg-green-500 hover:bg-green-400 text-white font-bold text-xl py-5 px-8 rounded-lg transition-colors shadow-xl">
+        <svg class="w-6 h-6" viewBox="0 0 32 32" fill="currentColor"><path d="M16 0C7.163 0 0 7.163 0 16a15.93 15.93 0 0 0 2.14 8.017L0 32l8.224-2.107A15.944 15.944 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.065 22.382c-.335.943-1.958 1.8-2.7 1.913-.69.105-1.56.15-2.51-.158-.578-.19-1.32-.443-2.27-.868-3.99-1.725-6.596-5.717-6.794-5.98-.198-.263-1.616-2.148-1.616-4.097 0-1.95 1.022-2.91 1.383-3.307.362-.397.791-.496 1.055-.496.264 0 .528.003.758.014.243.012.57-.092.893.681.335.793 1.14 2.745 1.239 2.943.099.198.165.43.033.693-.132.263-.198.429-.396.661-.198.231-.416.517-.594.694-.198.198-.404.413-.173.81.231.396 1.025 1.691 2.2 2.739 1.51 1.345 2.783 1.763 3.18 1.961.396.198.627.165.858-.099.231-.264.99-1.155 1.254-1.551.264-.396.528-.33.891-.198.363.132 2.31 1.089 2.706 1.287.396.198.66.297.759.462.099.165.099.96-.236 1.896z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+
+    <p class="mt-6 text-white/60 text-sm">Presupuesto gratuito · Sin compromiso · Respuesta inmediata</p>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer id="footer">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+    <div class="grid sm:grid-cols-3 gap-8 mb-10">
+
+      <!-- Brand -->
+      <div>
+        <p class="font-bebas text-2xl text-white tracking-widest mb-3">{{NOMBRE_NEGOCIO}}</p>
+        <p class="text-gray-500 text-sm">{{TIPO_NEGOCIO}} profesional en {{CIUDAD}}.</p>
+        <a href="tel:{{TELEFONO}}" class="block mt-4 text-orange font-bold text-lg hover:text-amber-400 transition-colors">{{TELEFONO}}</a>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <p class="text-white font-semibold mb-3 text-sm uppercase tracking-wider">Navegación</p>
+        <ul class="space-y-2 text-sm text-gray-500">
+          <li><a href="#servicios" class="hover:text-orange transition-colors">Servicios</a></li>
+          <li><a href="#nosotros"  class="hover:text-orange transition-colors">Nosotros</a></li>
+          <li><a href="#galeria"   class="hover:text-orange transition-colors">Galería</a></li>
+          <li><a href="#opiniones" class="hover:text-orange transition-colors">Opiniones</a></li>
+          <li><a href="#ubicacion" class="hover:text-orange transition-colors">Ubicación</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <p class="text-white font-semibold mb-3 text-sm uppercase tracking-wider">Contacto</p>
+        <ul class="space-y-2 text-sm text-gray-500">
+          <li>📞 <a href="tel:{{TELEFONO}}" class="hover:text-orange transition-colors">{{TELEFONO}}</a></li>
+          <li>💬 <a href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener noreferrer" class="hover:text-orange transition-colors">WhatsApp</a></li>
+          <li>📍 {{DIRECCION}}</li>
+          <li>🏙️ {{CIUDAD}}</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-600">
+      <p>&copy; 2025 {{NOMBRE_NEGOCIO}}. Todos los derechos reservados.</p>
+      <a href="https://cruzdigital.es" target="_blank" rel="noopener noreferrer"
+         class="flex items-center gap-2 text-gray-500 hover:text-orange transition-colors font-medium">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        Diseño web por Cruz Digital
+      </a>
+    </div>
+
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════
+     FLOATING WHATSAPP BUTTON
+═══════════════════════════════════════════ -->
+<a id="wa-btn" href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+  <svg width="34" height="34" viewBox="0 0 32 32" fill="white">
+    <path d="M16 0C7.163 0 0 7.163 0 16a15.93 15.93 0 0 0 2.14 8.017L0 32l8.224-2.107A15.944 15.944 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm8.065 22.382c-.335.943-1.958 1.8-2.7 1.913-.69.105-1.56.15-2.51-.158-.578-.19-1.32-.443-2.27-.868-3.99-1.725-6.596-5.717-6.794-5.98-.198-.263-1.616-2.148-1.616-4.097 0-1.95 1.022-2.91 1.383-3.307.362-.397.791-.496 1.055-.496.264 0 .528.003.758.014.243.012.57-.092.893.681.335.793 1.14 2.745 1.239 2.943.099.198.165.43.033.693-.132.263-.198.429-.396.661-.198.231-.416.517-.594.694-.198.198-.404.413-.173.81.231.396 1.025 1.691 2.2 2.739 1.51 1.345 2.783 1.763 3.18 1.961.396.198.627.165.858-.099.231-.264.99-1.155 1.254-1.551.264-.396.528-.33.891-.198.363.132 2.31 1.089 2.706 1.287.396.198.66.297.759.462.099.165.099.96-.236 1.896z"/>
+  </svg>
+</a>
+
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+  // ── Navbar scroll effect ──────────────────
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // ── Mobile menu toggle ────────────────────
+  const menuToggle  = document.getElementById('menu-toggle');
+  const mobileMenu  = document.getElementById('mobile-menu');
+  const iconOpen    = document.getElementById('icon-open');
+  const iconClose   = document.getElementById('icon-close');
+
+  menuToggle.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    iconOpen.classList.toggle('hidden', isOpen);
+    iconClose.classList.toggle('hidden', !isOpen);
+  });
+
+  // Close mobile menu on link click
+  mobileMenu.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      iconOpen.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+    })
+  );
+
+  // ── Scroll reveal ─────────────────────────
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    revealObserver.observe(el);
+  });
+
+  // ── Staggered card reveals ────────────────
+  document.querySelectorAll('.servicio-card, .why-card, .review-card').forEach((card, i) => {
+    card.style.transitionDelay = `${i * 70}ms`;
+  });
+
+  // ── Smooth anchor scroll ──────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ── Emergency section bg fix ──────────────
+  // Ensure the emergency section has the orange gradient
+  const emSec = document.getElementById('contacto');
+  if (emSec) {
+    emSec.style.background = 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)';
+  }
+</script>
+
+</body>
+</html>

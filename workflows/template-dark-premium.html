@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{NOMBRE_NEGOCIO}} — {{CIUDAD}}</title>
+  <meta name="description" content="{{DESCRIPCION}}" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'u-bg':    '#080808',
+            'u-surf':  '#111111',
+            'u-card':  '#161616',
+            'u-gold':  '#c8a97a',
+            'u-goldl': '#e0c99a',
+            'u-muted': '#5a5a5a',
+            'u-text':  '#e8e8e8',
+          },
+          fontFamily: {
+            bebas:    ['"Bebas Neue"', 'cursive'],
+            playfair: ['"Playfair Display"', 'serif'],
+            inter:    ['Inter', 'sans-serif'],
+          },
+          letterSpacing: {
+            widest2: '0.25em',
+            widest3: '0.35em',
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: #080808; color: #e8e8e8; }
+    body { font-family: 'Inter', sans-serif; background: #080808; overflow-x: hidden; }
+
+    /* ─── Scrollbar ─────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: #c8a97a; border-radius: 2px; }
+
+    /* ─── Navbar ─────────────────────────────────────── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(8,8,8,0.0);
+      backdrop-filter: blur(0px);
+      transition: background 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease;
+      border-bottom: 1px solid transparent;
+    }
+    #navbar.scrolled {
+      background: rgba(8,8,8,0.88);
+      backdrop-filter: blur(18px) saturate(1.6);
+      border-bottom-color: rgba(200,169,122,0.15);
+    }
+
+    /* ─── Hero ───────────────────────────────────────── */
+    #hero {
+      position: relative; height: 100vh; min-height: 640px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    #hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('{{FOTO_1}}');
+      background-size: cover; background-position: center;
+      transform: scale(1.08);
+      transition: transform 8s ease;
+    }
+    #hero-bg.loaded { transform: scale(1); }
+    #hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(8,8,8,0.72) 0%,
+        rgba(8,8,8,0.55) 40%,
+        rgba(8,8,8,0.82) 100%
+      );
+    }
+    #hero-content { position: relative; z-index: 2; text-align: center; padding: 0 1.5rem; }
+
+    /* ─── Ticker ─────────────────────────────────────── */
+    .ticker-track {
+      display: flex; white-space: nowrap;
+      animation: ticker-scroll 28s linear infinite;
+    }
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-sep { color: #c8a97a; margin: 0 1.2rem; }
+
+    /* ─── Gold line decorators ────────────────────────── */
+    .gold-line {
+      display: inline-block; width: 48px; height: 1px;
+      background: #c8a97a; vertical-align: middle; margin: 0 0.8rem;
+    }
+
+    /* ─── About section ──────────────────────────────── */
+    .about-img-wrap {
+      position: relative; overflow: hidden;
+    }
+    .about-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .about-img-wrap:hover img { transform: scale(1.04); }
+
+    .rating-card {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      background: #c8a97a; color: #080808;
+      padding: 1.4rem 1.8rem; text-align: center;
+    }
+
+    /* ─── Dish / Service Cards ───────────────────────── */
+    .dish-card {
+      background: #111111; overflow: hidden;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .dish-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(200,169,122,0.12);
+    }
+    .dish-img {
+      width: 100%; height: 220px; object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .dish-card:hover .dish-img { transform: scale(1.06); }
+
+    .dish-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: #c8a97a;
+    }
+
+    /* ─── Quote section ──────────────────────────────── */
+    #quote-section {
+      position: relative; overflow: hidden;
+    }
+    #quote-bg {
+      position: absolute; inset: 0;
+      background-image: url('{{FOTO_3}}');
+      background-size: cover; background-position: center;
+      opacity: 0.10;
+      filter: grayscale(60%);
+    }
+
+    /* ─── Gallery ────────────────────────────────────── */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto;
+      gap: 6px;
+    }
+    .g1 { grid-column: span 7; grid-row: span 2; }
+    .g2 { grid-column: span 5; }
+    .g3 { grid-column: span 5; }
+    .g4 { grid-column: span 4; }
+    .g5 { grid-column: span 4; }
+    .g6 { grid-column: span 4; }
+
+    .gallery-item { overflow: hidden; position: relative; }
+    .gallery-item img {
+      width: 100%; height: 100%; min-height: 220px; object-fit: cover;
+      transition: transform 0.6s ease, filter 0.6s ease;
+      filter: brightness(0.85);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.06);
+      filter: brightness(1);
+    }
+    .gallery-item::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(200,169,122,0.15), transparent);
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .gallery-item:hover::after { opacity: 1; }
+
+    @media (max-width: 768px) {
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .g1, .g2, .g3, .g4, .g5, .g6 { grid-column: span 1; grid-row: span 1; }
+    }
+
+    /* ─── Horarios block ─────────────────────────────── */
+    .horarios-block { white-space: pre-line; line-height: 2; }
+
+    /* ─── Map iframe ─────────────────────────────────── */
+    .map-frame { width: 100%; height: 420px; border: 0; filter: grayscale(30%) contrast(1.1) brightness(0.9); }
+
+    /* ─── CTA section ────────────────────────────────── */
+    #cta-section {
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1208 50%, #0f0f0f 100%);
+      border-top: 1px solid rgba(200,169,122,0.2);
+      border-bottom: 1px solid rgba(200,169,122,0.2);
+    }
+
+    /* ─── Floating WhatsApp ──────────────────────────── */
+    #whatsapp-btn {
+      position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 200;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: #25D366;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+      animation: wp-pulse 2.5s ease-in-out infinite;
+      transition: transform 0.2s ease;
+    }
+    #whatsapp-btn:hover { transform: scale(1.1); }
+    @keyframes wp-pulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.45); }
+      50%       { box-shadow: 0 4px 36px rgba(37,211,102,0.75), 0 0 0 12px rgba(37,211,102,0.08); }
+    }
+
+    /* ─── Mobile menu ────────────────────────────────── */
+    #mobile-menu {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 80%; max-width: 320px;
+      background: #0d0d0d; border-left: 1px solid rgba(200,169,122,0.2);
+      z-index: 300; transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+      padding: 5rem 2.5rem 2.5rem;
+    }
+    #mobile-menu.open { transform: translateX(0); }
+    #menu-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 299; opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #menu-overlay.open { opacity: 1; pointer-events: all; }
+
+    /* ─── Reveal animation ───────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0; transform: translateX(-40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0; transform: translateX(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ─── Utility ─────────────────────────────────────── */
+    .gold-border-b { border-bottom: 1px solid rgba(200,169,122,0.2); }
+    .text-gold { color: #c8a97a; }
+    .text-goldl { color: #e0c99a; }
+    .bg-gold { background: #c8a97a; }
+    .border-gold { border-color: #c8a97a; }
+    .font-bebas { font-family: 'Bebas Neue', cursive; }
+    .font-playfair { font-family: 'Playfair Display', serif; }
+
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: #c8a97a; color: #080808;
+      font-family: 'Bebas Neue', cursive; letter-spacing: 0.18em;
+      font-size: 1rem; padding: 0.9rem 2.4rem;
+      transition: background 0.25s ease, transform 0.2s ease;
+    }
+    .btn-gold:hover { background: #e0c99a; transform: translateY(-2px); }
+
+    .btn-outline-gold {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid #c8a97a; color: #c8a97a;
+      font-family: 'Bebas Neue', cursive; letter-spacing: 0.18em;
+      font-size: 1rem; padding: 0.9rem 2.4rem;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+    }
+    .btn-outline-gold:hover { background: #c8a97a; color: #080808; transform: translateY(-2px); }
+
+    /* ─── Section header ─────────────────────────────── */
+    .sec-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.3em;
+      text-transform: uppercase; color: #c8a97a;
+    }
+    .sec-title {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      letter-spacing: 0.06em; line-height: 1;
+      color: #e8e8e8;
+    }
+
+    /* ─── Services list ──────────────────────────────── */
+    .service-item {
+      border-bottom: 1px solid rgba(200,169,122,0.12);
+      padding: 1.2rem 0;
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 1rem;
+    }
+    .service-item:last-child { border-bottom: none; }
+
+    /* ─── Stars ──────────────────────────────────────── */
+    .stars { color: #c8a97a; font-size: 1.1rem; letter-spacing: 0.05em; }
+
+    /* ─── Responsive hero text ───────────────────────── */
+    .hero-title {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      letter-spacing: 0.08em; line-height: 0.95;
+      color: #e8e8e8;
+    }
+    .hero-sub {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.95rem, 2vw, 1.3rem);
+      color: rgba(200,169,122,0.9); font-style: italic;
+    }
+  </style>
+</head>
+<body class="bg-u-bg text-u-text">
+
+  <!-- ════════════════════════════════════════════
+       NAVBAR
+  ════════════════════════════════════════════ -->
+  <nav id="navbar" class="px-6 md:px-12 py-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+
+      <!-- Logo / Business name -->
+      <a href="#hero" class="font-bebas text-2xl tracking-widest2 text-u-text hover:text-u-gold transition-colors">
+        {{NOMBRE_NEGOCIO}}
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="hidden md:flex items-center gap-8 text-xs tracking-widest uppercase font-medium text-u-text/70">
+        <li><a href="#about"    class="hover:text-u-gold transition-colors">Nosotros</a></li>
+        <li><a href="#menu"     class="hover:text-u-gold transition-colors">{{TIPO_NEGOCIO}}</a></li>
+        <li><a href="#gallery"  class="hover:text-u-gold transition-colors">Galería</a></li>
+        <li><a href="#location" class="hover:text-u-gold transition-colors">Ubicación</a></li>
+      </ul>
+
+      <!-- CTA phone -->
+      <a href="tel:{{TELEFONO}}"
+         class="hidden md:inline-flex items-center gap-2 border border-u-gold text-u-gold font-bebas tracking-widest text-sm px-5 py-2 hover:bg-u-gold hover:text-u-bg transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/>
+        </svg>
+        {{TELEFONO}}
+      </a>
+
+      <!-- Hamburger -->
+      <button id="menu-toggle" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Abrir menú">
+        <span class="w-6 h-0.5 bg-u-text block transition-all"></span>
+        <span class="w-6 h-0.5 bg-u-text block transition-all"></span>
+        <span class="w-4 h-0.5 bg-u-gold block transition-all"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu overlay -->
+  <div id="menu-overlay"></div>
+
+  <!-- Mobile slide menu -->
+  <div id="mobile-menu">
+    <button id="menu-close" class="absolute top-5 right-5 text-u-muted hover:text-u-gold transition-colors" aria-label="Cerrar">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <p class="font-bebas text-xl tracking-widest text-u-gold mb-8">{{NOMBRE_NEGOCIO}}</p>
+    <nav class="flex flex-col gap-6">
+      <a href="#about"    class="mobile-link font-bebas text-2xl tracking-widest text-u-text/80 hover:text-u-gold transition-colors">Nosotros</a>
+      <a href="#menu"     class="mobile-link font-bebas text-2xl tracking-widest text-u-text/80 hover:text-u-gold transition-colors">{{TIPO_NEGOCIO}}</a>
+      <a href="#gallery"  class="mobile-link font-bebas text-2xl tracking-widest text-u-text/80 hover:text-u-gold transition-colors">Galería</a>
+      <a href="#location" class="mobile-link font-bebas text-2xl tracking-widest text-u-text/80 hover:text-u-gold transition-colors">Ubicación</a>
+    </nav>
+    <div class="mt-10 pt-8 border-t border-u-gold/20">
+      <a href="tel:{{TELEFONO}}" class="block font-bebas text-lg tracking-widest text-u-gold mb-3">{{TELEFONO}}</a>
+      <a href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener" class="btn-gold text-sm w-full justify-center">WhatsApp</a>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════ -->
+  <section id="hero">
+    <div id="hero-bg"></div>
+    <div id="hero-overlay"></div>
+
+    <!-- Animated content -->
+    <div id="hero-content" class="max-w-5xl mx-auto">
+
+      <!-- Eyebrow -->
+      <p class="sec-eyebrow mb-6 opacity-0 animate-[fadeUp_0.6s_0.2s_ease_forwards]"
+         style="animation: heroFadeUp 0.7s 0.2s ease forwards;">
+        <span class="gold-line"></span>
+        {{TIPO_NEGOCIO}} · {{CIUDAD}}
+        <span class="gold-line"></span>
+      </p>
+
+      <!-- Title -->
+      <h1 class="hero-title mb-6"
+          style="animation: heroFadeUp 0.7s 0.5s ease forwards; opacity:0;">
+        {{NOMBRE_NEGOCIO}}
+      </h1>
+
+      <!-- Tagline -->
+      <p class="hero-sub mb-10 max-w-xl mx-auto"
+         style="animation: heroFadeUp 0.7s 0.8s ease forwards; opacity:0;">
+        {{DESCRIPCION}}
+      </p>
+
+      <!-- Rating badge + CTA -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4"
+           style="animation: heroFadeUp 0.7s 1.0s ease forwards; opacity:0;">
+
+        <div class="flex items-center gap-3 bg-black/50 border border-u-gold/30 px-5 py-3 backdrop-blur-sm">
+          <div>
+            <div class="stars">★★★★★</div>
+            <p class="text-xs text-u-text/60 mt-0.5">{{TOTAL_REVIEWS}} reseñas verificadas</p>
+          </div>
+          <div class="text-3xl font-bebas text-u-gold ml-2">{{RATING}}</div>
+        </div>
+
+        <a href="#cta" class="btn-gold">
+          Reserva tu mesa
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-u-muted"
+         style="animation: heroFadeUp 0.7s 1.4s ease forwards; opacity:0;">
+      <span class="text-xs tracking-widest uppercase" style="font-size:0.6rem; letter-spacing:0.25em;">Descubrir</span>
+      <div class="w-px h-12 bg-gradient-to-b from-u-gold to-transparent"></div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+
+  <!-- ════════════════════════════════════════════
+       TICKER
+  ════════════════════════════════════════════ -->
+  <div class="bg-u-gold py-3 overflow-hidden">
+    <div class="ticker-track">
+      <!-- first set -->
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{NOMBRE_NEGOCIO}}</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{TIPO_NEGOCIO}}</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{CIUDAD}}</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{RATING}} ★ Google</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Reservas disponibles</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Sabor auténtico</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Cocina de mercado</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Experiencia única</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <!-- duplicate for seamless loop -->
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{NOMBRE_NEGOCIO}}</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{TIPO_NEGOCIO}}</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{CIUDAD}}</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">{{RATING}} ★ Google</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Reservas disponibles</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Sabor auténtico</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Cocina de mercado</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+      <span class="font-bebas tracking-widest text-u-bg text-sm px-4">Experiencia única</span>
+      <span class="ticker-sep text-u-bg">✦</span>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       ABOUT
+  ════════════════════════════════════════════ -->
+  <section id="about" class="py-28 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 lg:gap-24 items-center">
+
+      <!-- Image side -->
+      <div class="about-img-wrap aspect-[4/5] relative reveal reveal-left">
+        <img src="{{FOTO_2}}" alt="{{NOMBRE_NEGOCIO}} — ambiente" loading="lazy" />
+
+        <!-- Rating card overlay -->
+        <div class="rating-card">
+          <div class="font-bebas text-5xl leading-none">{{RATING}}</div>
+          <div class="stars mt-1 text-u-bg">★★★★★</div>
+          <p class="text-xs font-medium mt-1 tracking-wider text-u-bg/70">{{TOTAL_REVIEWS}} reseñas</p>
+        </div>
+
+        <!-- Decorative corner frame -->
+        <div class="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-u-gold/60"></div>
+        <div class="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-u-gold/60 mb-0 mr-0"
+             style="bottom:-1px; right:-1px;"></div>
+      </div>
+
+      <!-- Text side -->
+      <div class="reveal reveal-right">
+        <p class="sec-eyebrow mb-4">Nuestra historia</p>
+        <h2 class="sec-title mb-6">
+          Una experiencia<br />
+          <span class="text-u-gold">que recuerdas</span>
+        </h2>
+
+        <div class="w-12 h-0.5 bg-u-gold mb-8"></div>
+
+        <p class="text-u-text/75 font-inter font-light leading-relaxed text-lg mb-8">
+          {{DESCRIPCION}}
+        </p>
+
+        <!-- Stats row -->
+        <div class="grid grid-cols-3 gap-6 mb-10 pt-8 border-t border-u-gold/15">
+          <div>
+            <div class="font-bebas text-4xl text-u-gold">{{RATING}}<span class="text-xl">/5</span></div>
+            <p class="text-xs text-u-muted tracking-wider uppercase mt-1">Valoración</p>
+          </div>
+          <div>
+            <div class="font-bebas text-4xl text-u-gold">{{TOTAL_REVIEWS}}</div>
+            <p class="text-xs text-u-muted tracking-wider uppercase mt-1">Reseñas</p>
+          </div>
+          <div>
+            <div class="font-bebas text-4xl text-u-gold">{{CIUDAD}}</div>
+            <p class="text-xs text-u-muted tracking-wider uppercase mt-1">Ubicación</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="#cta"    class="btn-gold">Reservar mesa</a>
+          <a href="#location" class="btn-outline-gold">Cómo llegar</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       SERVICIOS / PLATOS ESTRELLA
+  ════════════════════════════════════════════ -->
+  <section id="menu" class="py-28 px-6 md:px-12 bg-u-surf">
+    <div class="max-w-7xl mx-auto">
+
+      <!-- Header -->
+      <div class="text-center mb-16 reveal">
+        <p class="sec-eyebrow mb-4">Lo mejor de la casa</p>
+        <h2 class="sec-title">
+          Platos &amp; Servicios<br/>
+          <span class="text-u-gold">Estrella</span>
+        </h2>
+        <div class="flex items-center justify-center mt-6">
+          <div class="w-16 h-px bg-u-gold/40"></div>
+          <div class="w-2 h-2 bg-u-gold rotate-45 mx-3"></div>
+          <div class="w-16 h-px bg-u-gold/40"></div>
+        </div>
+      </div>
+
+      <!-- Cards grid — injected by {{SERVICIOS_HTML}} -->
+      <div id="servicios-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+        {{SERVICIOS_HTML}}
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       QUOTE / FULL-WIDTH IMAGE SECTION
+  ════════════════════════════════════════════ -->
+  <section id="quote-section" class="py-32 px-6 md:px-12">
+    <div id="quote-bg"></div>
+    <div class="relative z-10 max-w-4xl mx-auto text-center reveal">
+      <div class="text-u-gold text-6xl font-playfair leading-none mb-6 opacity-40">"</div>
+      <blockquote class="font-playfair text-2xl md:text-4xl italic text-u-text/90 leading-relaxed">
+        La cocina es nuestra forma de decir<br/>
+        <span class="text-u-gold not-italic font-bold">"bienvenido a casa"</span>
+      </blockquote>
+      <div class="mt-8 flex items-center justify-center gap-4">
+        <div class="w-10 h-px bg-u-gold/50"></div>
+        <p class="text-u-gold text-sm tracking-widest uppercase font-medium">{{NOMBRE_NEGOCIO}}</p>
+        <div class="w-10 h-px bg-u-gold/50"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       GALLERY
+  ════════════════════════════════════════════ -->
+  <section id="gallery" class="py-28 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center mb-12 reveal">
+        <p class="sec-eyebrow mb-4">Nuestra casa</p>
+        <h2 class="sec-title">Galería</h2>
+      </div>
+
+      <div class="gallery-grid reveal">
+        <div class="gallery-item g1">
+          <img src="{{FOTO_1}}" alt="{{NOMBRE_NEGOCIO}} — foto 1" loading="lazy" />
+        </div>
+        <div class="gallery-item g2">
+          <img src="{{FOTO_2}}" alt="{{NOMBRE_NEGOCIO}} — foto 2" loading="lazy" />
+        </div>
+        <div class="gallery-item g3">
+          <img src="{{FOTO_3}}" alt="{{NOMBRE_NEGOCIO}} — foto 3" loading="lazy" />
+        </div>
+        <div class="gallery-item g4">
+          <img src="{{FOTO_4}}" alt="{{NOMBRE_NEGOCIO}} — foto 4" loading="lazy" />
+        </div>
+        <div class="gallery-item g5">
+          <img src="{{FOTO_5}}" alt="{{NOMBRE_NEGOCIO}} — foto 5" loading="lazy" />
+        </div>
+        <div class="gallery-item g6">
+          <!-- decorative panel -->
+          <div class="min-h-[220px] h-full bg-u-surf flex flex-col items-center justify-center gap-4 p-8 border border-u-gold/10">
+            <div class="font-bebas text-3xl tracking-widest text-u-gold text-center">{{NOMBRE_NEGOCIO}}</div>
+            <div class="w-8 h-0.5 bg-u-gold"></div>
+            <div class="stars text-xl">★★★★★</div>
+            <p class="text-xs text-u-muted tracking-widest uppercase text-center">{{RATING}} · {{TOTAL_REVIEWS}} reseñas</p>
+            <a href="#cta" class="btn-gold text-xs mt-2">Reservar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       MENÚ / SERVICIOS LIST
+  ════════════════════════════════════════════ -->
+  <section class="py-28 px-6 md:px-12 bg-u-surf gold-border-b">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center mb-16 reveal">
+        <p class="sec-eyebrow mb-4">Carta completa</p>
+        <h2 class="sec-title">
+          Nuestra <span class="text-u-gold">Oferta</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-x-16 gap-y-0 reveal">
+        <!-- Servicios list injected — if simple text, we show horarios too -->
+        <div class="col-span-2">
+          {{SERVICIOS_HTML}}
+        </div>
+      </div>
+
+      <!-- Horarios -->
+      <div class="mt-16 grid md:grid-cols-2 gap-12 items-start border-t border-u-gold/15 pt-12 reveal">
+        <div>
+          <p class="sec-eyebrow mb-4">Horario de apertura</p>
+          <h3 class="font-bebas text-3xl tracking-widest text-u-text mb-6">Estamos aquí para ti</h3>
+          <div class="horarios-block text-u-text/75 font-light leading-8">
+            {{HORARIOS_HTML}}
+          </div>
+        </div>
+        <div>
+          <p class="sec-eyebrow mb-4">Contacto directo</p>
+          <h3 class="font-bebas text-3xl tracking-widest text-u-text mb-6">Habla con nosotros</h3>
+          <div class="space-y-5">
+            <a href="tel:{{TELEFONO}}"
+               class="flex items-center gap-4 group">
+              <div class="w-10 h-10 border border-u-gold/30 flex items-center justify-center text-u-gold group-hover:bg-u-gold group-hover:text-u-bg transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs text-u-muted tracking-wider uppercase mb-0.5">Teléfono</p>
+                <p class="text-u-text font-medium">{{TELEFONO}}</p>
+              </div>
+            </a>
+            <a href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener"
+               class="flex items-center gap-4 group">
+              <div class="w-10 h-10 border border-u-gold/30 flex items-center justify-center text-u-gold group-hover:bg-u-gold group-hover:text-u-bg transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs text-u-muted tracking-wider uppercase mb-0.5">WhatsApp</p>
+                <p class="text-u-text font-medium">Escríbenos ahora</p>
+              </div>
+            </a>
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 border border-u-gold/30 flex items-center justify-center text-u-gold flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs text-u-muted tracking-wider uppercase mb-0.5">Dirección</p>
+                <p class="text-u-text font-medium">{{DIRECCION}}, {{CIUDAD}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       LOCATION
+  ════════════════════════════════════════════ -->
+  <section id="location" class="py-28 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="text-center mb-16 reveal">
+        <p class="sec-eyebrow mb-4">Encuentra tu camino</p>
+        <h2 class="sec-title">
+          Dónde <span class="text-u-gold">estamos</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12 items-stretch">
+
+        <!-- Contact info -->
+        <div class="flex flex-col justify-between reveal reveal-left bg-u-surf border border-u-gold/10 p-10">
+          <div>
+            <p class="font-bebas text-4xl tracking-widest text-u-gold mb-2">{{NOMBRE_NEGOCIO}}</p>
+            <p class="text-u-muted text-sm tracking-widest uppercase mb-8">{{TIPO_NEGOCIO}} · {{CIUDAD}}</p>
+
+            <div class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div class="text-u-gold mt-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-u-muted tracking-wider uppercase mb-1">Dirección</p>
+                  <p class="text-u-text">{{DIRECCION}}</p>
+                  <p class="text-u-text">{{CIUDAD}}</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="text-u-gold mt-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-u-muted tracking-wider uppercase mb-1">Teléfono</p>
+                  <a href="tel:{{TELEFONO}}" class="text-u-text hover:text-u-gold transition-colors">{{TELEFONO}}</a>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="text-u-gold mt-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs text-u-muted tracking-wider uppercase mb-1">Horario</p>
+                  <div class="horarios-block text-u-text text-sm">{{HORARIOS_HTML}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rating strip -->
+          <div class="mt-10 pt-8 border-t border-u-gold/15 flex items-center justify-between">
+            <div>
+              <div class="stars text-lg">★★★★★</div>
+              <p class="text-xs text-u-muted mt-1">{{TOTAL_REVIEWS}} reseñas en Google</p>
+            </div>
+            <div class="font-bebas text-5xl text-u-gold">{{RATING}}</div>
+          </div>
+        </div>
+
+        <!-- Map -->
+        <div class="reveal reveal-right min-h-[420px] border border-u-gold/10 overflow-hidden">
+          {{MAPS_EMBED}}
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       CTA
+  ════════════════════════════════════════════ -->
+  <section id="cta" id="cta-section" class="py-36 px-6 md:px-12 relative overflow-hidden"
+           style="background: linear-gradient(135deg, #0f0f0f 0%, #1a1208 50%, #0f0f0f 100%); border-top: 1px solid rgba(200,169,122,0.2); border-bottom: 1px solid rgba(200,169,122,0.2);">
+
+    <!-- Decorative background text -->
+    <div class="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
+      <span class="font-bebas text-[18vw] text-u-gold/[0.03] whitespace-nowrap tracking-widest">RESERVA</span>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto text-center reveal">
+      <p class="sec-eyebrow mb-6">¿Listo para visitarnos?</p>
+      <h2 class="font-bebas text-[clamp(3rem,8vw,6.5rem)] leading-none tracking-widest text-u-text mb-4">
+        RESERVA TU MESA
+      </h2>
+      <p class="font-playfair text-xl italic text-u-gold mb-12">
+        Una experiencia gastronómica que no olvidarás
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-5">
+        <a href="tel:{{TELEFONO}}"
+           class="btn-gold text-base px-10 py-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z"/>
+          </svg>
+          Llamar ahora
+        </a>
+
+        <a href="https://wa.me/{{WHATSAPP}}?text=Hola,%20me%20gustar%C3%ADa%20reservar%20una%20mesa%20en%20{{NOMBRE_NEGOCIO}}"
+           target="_blank" rel="noopener"
+           class="btn-outline-gold text-base px-10 py-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════ -->
+  <footer class="bg-u-surf border-t border-u-gold/15 pt-20 pb-8 px-6 md:px-12">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="grid md:grid-cols-3 gap-12 mb-16">
+
+        <!-- Col 1: Brand -->
+        <div>
+          <p class="font-bebas text-3xl tracking-widest text-u-text mb-3">{{NOMBRE_NEGOCIO}}</p>
+          <p class="text-xs text-u-gold tracking-widest uppercase mb-5">{{TIPO_NEGOCIO}} · {{CIUDAD}}</p>
+          <p class="text-u-muted text-sm font-light leading-relaxed max-w-xs">
+            {{DESCRIPCION}}
+          </p>
+          <div class="flex gap-3 mt-6">
+            <!-- Social placeholder icons -->
+            <a href="#" class="w-9 h-9 border border-u-gold/25 flex items-center justify-center text-u-muted hover:text-u-gold hover:border-u-gold transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#" class="w-9 h-9 border border-u-gold/25 flex items-center justify-center text-u-muted hover:text-u-gold hover:border-u-gold transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Contact -->
+        <div>
+          <p class="sec-eyebrow mb-6">Contacto</p>
+          <ul class="space-y-4 text-u-muted text-sm font-light">
+            <li class="flex items-start gap-3">
+              <span class="text-u-gold mt-0.5">→</span>
+              <span>{{DIRECCION}}, {{CIUDAD}}</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-u-gold">→</span>
+              <a href="tel:{{TELEFONO}}" class="hover:text-u-gold transition-colors">{{TELEFONO}}</a>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-u-gold">→</span>
+              <a href="https://wa.me/{{WHATSAPP}}" target="_blank" rel="noopener" class="hover:text-u-gold transition-colors">WhatsApp</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Horarios -->
+        <div>
+          <p class="sec-eyebrow mb-6">Horario</p>
+          <div class="horarios-block text-u-muted text-sm font-light leading-8">
+            {{HORARIOS_HTML}}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="border-t border-u-gold/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-u-muted">
+        <p>© 2025 <span class="text-u-gold">{{NOMBRE_NEGOCIO}}</span>. Todos los derechos reservados.</p>
+        <p>
+          Diseño web por
+          <a href="https://cruzdigital.es" target="_blank" rel="noopener"
+             class="text-u-gold hover:text-u-goldl transition-colors font-medium tracking-wider">
+            Cruz Digital
+          </a>
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+
+  <!-- ════════════════════════════════════════════
+       FLOATING WHATSAPP BUTTON
+  ════════════════════════════════════════════ -->
+  <a id="whatsapp-btn"
+     href="https://wa.me/{{WHATSAPP}}?text=Hola,%20me%20gustar%C3%ADa%20reservar%20en%20{{NOMBRE_NEGOCIO}}"
+     target="_blank" rel="noopener"
+     aria-label="Contactar por WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+
+  <!-- ════════════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════════ -->
+  <script>
+    // ── Navbar scroll effect ───────────────────
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // ── Hero background ken-burns on load ─────
+    const heroBg = document.getElementById('hero-bg');
+    if (heroBg) {
+      setTimeout(() => heroBg.classList.add('loaded'), 100);
+    }
+
+    // ── Mobile menu ───────────────────────────
+    const menuToggle  = document.getElementById('menu-toggle');
+    const menuClose   = document.getElementById('menu-close');
+    const mobileMenu  = document.getElementById('mobile-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+
+    function openMenu() {
+      mobileMenu.classList.add('open');
+      menuOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      menuOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (menuToggle)  menuToggle.addEventListener('click', openMenu);
+    if (menuClose)   menuClose.addEventListener('click', closeMenu);
+    if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+    mobileLinks.forEach(l => l.addEventListener('click', closeMenu));
+
+    // ── IntersectionObserver reveal ────────────
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px',
+    });
+
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // ── Smooth scroll for anchor links ────────
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const id = anchor.getAttribute('href').slice(1);
+        const target = document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ── Dish card stagger animation ───────────
+    const dishCards = document.querySelectorAll('#servicios-grid .dish-card, #servicios-grid > *');
+    dishCards.forEach((card, i) => {
+      card.classList.add('reveal');
+      card.style.transitionDelay = (i * 0.08) + 's';
+    });
+  </script>
+
+</body>
+</html>
