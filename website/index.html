@@ -3,519 +3,992 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cruz Digital - Automatización e IA para tu negocio</title>
-  <meta name="description" content="Automatiza tu negocio con Inteligencia Artificial. Agentes IA, N8N, bots para redes sociales, captación de leads y más." />
+  <title>Cruz Digital — Páginas Web Profesionales y Automatización con IA</title>
+  <meta name="description" content="Páginas web profesionales para negocios locales desde 297€. Demo gratuita en 48h. También automatizamos cualquier proceso de tu empresa con Inteligencia Artificial." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --primary: #0ea5e9;
-      --primary-dark: #0284c7;
-      --dark: #0f172a;
-      --dark2: #1e293b;
-      --dark3: #334155;
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
+      --blue: #0ea5e9;
+      --blue-dark: #0284c7;
+      --indigo: #6366f1;
+      --green: #10b981;
+      --bg: #060b17;
+      --bg2: #0d1424;
+      --bg3: #131d30;
+      --border: rgba(255,255,255,0.07);
+      --text: #e8edf5;
+      --muted: #7a8ba0;
       --accent: #38bdf8;
     }
 
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: var(--dark);
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    /* NAV */
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 3px; }
+
+    /* ─── NAV ─── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(15,23,42,0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: -0.5px;
-    }
-    .logo span { color: var(--text); }
-    nav a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-    nav a:hover { color: var(--accent); }
-
-    /* HERO */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 6rem 2rem 4rem;
-      background: radial-gradient(ellipse at top, rgba(14,165,233,0.15) 0%, transparent 70%);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(14,165,233,0.08) 0%, transparent 70%);
-      top: 10%; left: 50%;
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
-    .badge {
-      display: inline-block;
-      background: rgba(14,165,233,0.12);
-      border: 1px solid rgba(14,165,233,0.3);
-      color: var(--accent);
-      padding: 0.4rem 1rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.5px;
-    }
-    .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      margin-bottom: 1.5rem;
-    }
-    .hero h1 span {
-      background: linear-gradient(135deg, var(--accent), #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin-bottom: 2.5rem;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      padding: 0.9rem 2.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: all 0.2s;
-      display: inline-block;
-      box-shadow: 0 0 30px rgba(14,165,233,0.3);
-    }
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      box-shadow: 0 0 40px rgba(14,165,233,0.5);
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: transparent;
-      color: var(--text-muted);
-      padding: 0.9rem 2.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1rem;
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-left: 1rem;
-      transition: all 0.2s;
-      display: inline-block;
-    }
-    .btn-secondary:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* STATS */
-    .stats {
-      display: flex;
-      gap: 3rem;
-      margin-top: 4rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .stat { text-align: center; }
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    .stat-label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* SECTION */
-    section {
-      padding: 5rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .section-label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    .section-title {
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      margin-bottom: 1rem;
-    }
-    .section-sub {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      max-width: 600px;
-      margin-bottom: 3rem;
-    }
-
-    /* METODOLOGÍA */
-    .metodo-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .metodo-card {
-      background: var(--dark2);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 2rem;
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 2rem;
+      height: 70px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(6,11,23,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
       transition: all 0.3s;
     }
-    .metodo-card:hover {
-      border-color: rgba(14,165,233,0.3);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    .nav-logo {
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.5px;
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none; color: var(--text);
     }
-    .metodo-num {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: var(--accent);
-      opacity: 0.4;
-      min-width: 60px;
-      line-height: 1;
+    .nav-logo .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 12px var(--blue);
+      animation: pulse 2s infinite;
     }
-    .metodo-body h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
     }
-    .metodo-body p { color: var(--text-muted); font-size: 0.95rem; }
-    @media (max-width: 500px) {
-      .metodo-card { flex-direction: column; gap: 0.5rem; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      font-weight: 500; transition: color 0.2s;
     }
-
-    /* SERVICES GRID */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--blue); color: white !important;
+      padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 600 !important;
+      font-size: 0.88rem !important; transition: all 0.2s !important;
+      box-shadow: 0 0 20px rgba(14,165,233,0.25);
     }
-    .card {
-      background: var(--dark2);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 1.75rem;
-      transition: all 0.3s;
-    }
-    .card:hover {
-      border-color: rgba(14,165,233,0.3);
-      transform: translateY(-3px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-    .card-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .card h3 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-    .card p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-
-    /* HOW IT WORKS */
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 2rem;
-      counter-reset: step;
-    }
-    .step {
-      position: relative;
-      padding-left: 1rem;
-    }
-    .step-num {
-      font-size: 3rem;
-      font-weight: 800;
-      color: rgba(14,165,233,0.15);
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-    .step h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-    .step p { color: var(--text-muted); font-size: 0.88rem; }
-
-    /* ABOUT */
-    .about-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
+    .nav-cta:hover {
+      background: var(--blue-dark) !important;
+      box-shadow: 0 0 30px rgba(14,165,233,0.4) !important;
+      color: white !important;
     }
     @media (max-width: 700px) {
-      .about-inner { grid-template-columns: 1fr; }
-    }
-    .about-avatar {
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), #818cf8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-    }
-    .about-text h2 { margin-bottom: 1rem; }
-    .about-text p { color: var(--text-muted); margin-bottom: 1rem; }
-    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
-    .tag {
-      background: rgba(14,165,233,0.1);
-      border: 1px solid rgba(14,165,233,0.2);
-      color: var(--accent);
-      padding: 0.3rem 0.8rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
+      .nav-links { display: none; }
     }
 
-    /* CTA SECTION */
-    .cta-section {
-      background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(129,140,248,0.1));
-      border: 1px solid rgba(14,165,233,0.2);
-      border-radius: 20px;
-      padding: 4rem 2rem;
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       text-align: center;
-      margin: 0 2rem 5rem;
+      padding: 8rem 2rem 5rem;
+      position: relative; overflow: hidden;
     }
-    .cta-section h2 {
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      font-weight: 700;
-      margin-bottom: 1rem;
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(14,165,233,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99,102,241,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 30% at 20% 70%, rgba(16,185,129,0.06) 0%, transparent 50%);
     }
-    .cta-section p {
-      color: var(--text-muted);
+    .grid-lines {
+      position: absolute; inset: 0; z-index: 0; opacity: 0.04;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.25);
+      color: var(--accent); padding: 0.45rem 1.1rem; border-radius: 999px;
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 0.3px;
       margin-bottom: 2rem;
-      font-size: 1.05rem;
+    }
+    .hero-badge .live {
+      width: 6px; height: 6px; border-radius: 50%; background: #10b981;
+      box-shadow: 0 0 8px #10b981; animation: pulse 1.5s infinite;
+    }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900; line-height: 1.05; letter-spacing: -2.5px;
+      margin-bottom: 1.5rem;
+    }
+    .grad-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #34d399 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: gradMove 4s ease infinite;
+    }
+    @keyframes gradMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .hero-sub {
+      font-size: 1.15rem; color: var(--muted); max-width: 580px;
+      margin: 0 auto 2.5rem; font-weight: 400; line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 4rem;
+    }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: #25d366; color: white;
+      padding: 0.85rem 2rem; border-radius: 10px;
+      text-decoration: none; font-weight: 700; font-size: 0.95rem;
+      transition: all 0.2s;
+      box-shadow: 0 0 30px rgba(37,211,102,0.3);
+    }
+    .btn-wa:hover { background: #1da851; box-shadow: 0 0 45px rgba(37,211,102,0.45); transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent; color: var(--text);
+      padding: 0.85rem 2rem; border-radius: 10px;
+      text-decoration: none; font-weight: 600; font-size: 0.95rem;
+      border: 1px solid var(--border); transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: rgba(14,165,233,0.4); color: var(--accent); }
+    .hero-stats {
+      display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+    }
+    .hstat { text-align: center; }
+    .hstat-n {
+      font-size: 2.2rem; font-weight: 800; color: var(--text);
+      letter-spacing: -1px; display: block;
+    }
+    .hstat-l { font-size: 0.82rem; color: var(--muted); }
+
+    /* ─── TECH STRIP ─── */
+    .tech-strip {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem; overflow: hidden;
+      background: var(--bg2);
+    }
+    .tech-inner {
+      display: flex; align-items: center; gap: 3rem;
+      animation: scrollLeft 20s linear infinite;
+      width: max-content;
+    }
+    @keyframes scrollLeft {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    .tech-item {
+      display: flex; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-size: 0.85rem; font-weight: 600;
+      white-space: nowrap;
+    }
+    .tech-item span { font-size: 1.1rem; }
+
+    /* ─── SECTION BASE ─── */
+    .section { padding: 6rem 2rem; max-width: 1140px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px;
+      color: var(--blue); font-weight: 700; margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 800;
+      letter-spacing: -1px; line-height: 1.15; margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--muted); font-size: 1.05rem; max-width: 560px;
+      margin-bottom: 3.5rem; line-height: 1.7;
     }
 
-    /* FOOTER */
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    /* ─── WEB PRODUCT ─── */
+    .web-product {
+      background: var(--bg2);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 6rem 2rem;
     }
+    .web-product-inner {
+      max-width: 1140px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    @media (max-width: 860px) {
+      .web-product-inner { grid-template-columns: 1fr; gap: 3rem; }
+    }
+    .demo-phone {
+      position: relative; display: flex; justify-content: center;
+    }
+    .phone-frame {
+      width: 260px; height: 460px;
+      background: #0a0f1e;
+      border-radius: 36px;
+      border: 2px solid rgba(255,255,255,0.12);
+      box-shadow:
+        0 0 0 6px rgba(255,255,255,0.04),
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(14,165,233,0.1);
+      overflow: hidden;
+      position: relative;
+    }
+    .phone-notch {
+      width: 80px; height: 20px;
+      background: #0a0f1e; border-radius: 0 0 14px 14px;
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      z-index: 2; border: 2px solid rgba(255,255,255,0.08);
+      border-top: none;
+    }
+    .phone-screen {
+      width: 100%; height: 100%; padding: 2rem 1rem 1rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      overflow: hidden;
+    }
+    .phone-header {
+      background: linear-gradient(135deg, #0f3460, #1a1a2e);
+      border-radius: 10px; padding: 0.75rem; text-align: center;
+      font-size: 0.65rem; font-weight: 700; color: white;
+      margin-top: 0.5rem;
+    }
+    .phone-web-preview {
+      background: white; border-radius: 8px; height: 160px;
+      overflow: hidden; position: relative;
+    }
+    .web-preview-header {
+      background: linear-gradient(135deg, #1a1a2e, #0f3460);
+      height: 35px; display: flex; align-items: center;
+      padding: 0 0.75rem; gap: 0.3rem;
+    }
+    .web-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .web-preview-content { padding: 0.5rem; }
+    .web-preview-line {
+      height: 5px; border-radius: 3px; margin-bottom: 4px;
+      background: #e5e7eb;
+    }
+    .web-preview-line.accent { background: #0ea5e9; width: 60%; }
+    .web-preview-line.short { width: 40%; }
+    .web-preview-line.med { width: 75%; }
+    .chat-bubble {
+      padding: 0.5rem 0.75rem; border-radius: 12px;
+      font-size: 0.6rem; line-height: 1.4; max-width: 85%;
+    }
+    .chat-in {
+      background: rgba(255,255,255,0.05); color: #94a3b8;
+      border-radius: 12px 12px 12px 2px; align-self: flex-start;
+    }
+    .chat-out {
+      background: #0ea5e9; color: white;
+      border-radius: 12px 12px 2px 12px; align-self: flex-end;
+    }
+    .phone-screen { display: flex; flex-direction: column; }
+    .phone-glow {
+      position: absolute; width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(14,165,233,0.15), transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .step-flow {
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+    .flow-step {
+      display: flex; align-items: flex-start; gap: 1.25rem;
+    }
+    .flow-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .flow-icon.blue { background: rgba(14,165,233,0.12); border: 1px solid rgba(14,165,233,0.2); }
+    .flow-icon.green { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2); }
+    .flow-icon.indigo { background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2); }
+    .flow-icon.orange { background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.2); }
+    .flow-body h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .flow-body p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+
+    /* ─── PRICING ─── */
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .price-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 2.5rem 2rem;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .price-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(14,165,233,0.5), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .price-card:hover {
+      border-color: rgba(14,165,233,0.3);
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    }
+    .price-card:hover::before { opacity: 1; }
+    .price-card.featured {
+      background: linear-gradient(160deg, rgba(14,165,233,0.08), rgba(99,102,241,0.08));
+      border-color: rgba(14,165,233,0.35);
+      box-shadow: 0 0 60px rgba(14,165,233,0.08);
+    }
+    .price-card.featured::before { opacity: 1; background: linear-gradient(90deg, #0ea5e9, #6366f1); height: 3px; }
+    .price-badge-top {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: white; font-size: 0.7rem; font-weight: 700;
+      padding: 0.3rem 0.75rem; border-radius: 999px; letter-spacing: 0.5px;
+    }
+    .price-name {
+      font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--muted); font-weight: 600; margin-bottom: 1rem;
+    }
+    .price-amount {
+      font-size: 3.5rem; font-weight: 900; letter-spacing: -2px;
+      line-height: 1; margin-bottom: 0.25rem; color: var(--text);
+    }
+    .price-amount span { font-size: 1.5rem; color: var(--muted); font-weight: 400; }
+    .price-time {
+      font-size: 0.82rem; color: var(--muted); margin-bottom: 2rem;
+    }
+    .price-divider {
+      height: 1px; background: var(--border); margin-bottom: 1.75rem;
+    }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 2rem; }
+    .price-features li {
+      display: flex; align-items: flex-start; gap: 0.65rem;
+      font-size: 0.88rem; color: var(--muted);
+    }
+    .price-features li .ck {
+      color: #10b981; font-size: 0.9rem; flex-shrink: 0; margin-top: 2px;
+    }
+    .btn-price {
+      display: block; text-align: center; text-decoration: none;
+      padding: 0.9rem 1.5rem; border-radius: 10px; font-weight: 700;
+      font-size: 0.92rem; transition: all 0.2s;
+    }
+    .btn-price-primary {
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: white; box-shadow: 0 0 30px rgba(14,165,233,0.2);
+    }
+    .btn-price-primary:hover { box-shadow: 0 0 45px rgba(14,165,233,0.4); transform: translateY(-1px); }
+    .btn-price-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-price-ghost:hover { border-color: rgba(14,165,233,0.4); color: var(--accent); }
+
+    /* ─── SERVICES ─── */
+    .services-section { background: var(--bg2); padding: 6rem 0; }
+    .services-inner { max-width: 1140px; margin: 0 auto; padding: 0 2rem; }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+    }
+    @media (max-width: 860px) { .services-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .services-grid { grid-template-columns: 1fr; } }
+    .svc-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.75rem;
+      transition: all 0.3s;
+    }
+    .svc-card:hover {
+      border-color: rgba(14,165,233,0.25);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      transform: translateY(-4px);
+    }
+    .svc-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(99,102,241,0.1));
+      border: 1px solid rgba(14,165,233,0.15);
+    }
+    .svc-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .svc-card p { color: var(--muted); font-size: 0.875rem; line-height: 1.65; }
+
+    /* ─── PROCESS ─── */
+    .process-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative;
+    }
+    @media (max-width: 860px) { .process-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .process-grid { grid-template-columns: 1fr; } }
+    .process-grid::before {
+      content: ''; position: absolute; top: 40px; left: 12.5%; right: 12.5%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #0ea5e9, #6366f1, transparent);
+      z-index: 0;
+    }
+    @media (max-width: 860px) { .process-grid::before { display: none; } }
+    .proc-step { text-align: center; padding: 0 1.5rem 2rem; position: relative; z-index: 1; }
+    .proc-num {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--bg3); border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; margin: 0 auto 1.5rem;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .proc-step:hover .proc-num {
+      border-color: rgba(14,165,233,0.5);
+      box-shadow: 0 0 30px rgba(14,165,233,0.2);
+    }
+    .proc-step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .proc-step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ─── NUMBERS ─── */
+    .numbers-section {
+      background: linear-gradient(135deg, rgba(14,165,233,0.06), rgba(99,102,241,0.06));
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 5rem 2rem;
+    }
+    .numbers-grid {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+    }
+    @media (max-width: 700px) { .numbers-grid { grid-template-columns: repeat(2, 1fr); } }
+    .num-item { text-align: center; }
+    .num-value {
+      font-size: 3rem; font-weight: 900; letter-spacing: -2px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; display: block; line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .num-label { font-size: 0.88rem; color: var(--muted); font-weight: 500; }
+
+    /* ─── ABOUT ─── */
+    .about-section { padding: 6rem 2rem; max-width: 1140px; margin: 0 auto; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; align-items: center; }
+    @media (max-width: 700px) { .about-grid { grid-template-columns: 1fr; gap: 3rem; } }
+    .about-visual {
+      position: relative; display: flex; justify-content: center;
+    }
+    .about-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 24px; padding: 2.5rem; text-align: center;
+      width: 100%; max-width: 320px;
+    }
+    .avatar {
+      width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 1.25rem;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; font-weight: 900; color: white;
+      box-shadow: 0 0 40px rgba(14,165,233,0.3);
+    }
+    .about-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .about-card .role { color: var(--blue); font-size: 0.85rem; font-weight: 600; margin-bottom: 1.25rem; }
+    .about-skills { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    .skill-tag {
+      background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.2);
+      color: var(--accent); padding: 0.3rem 0.75rem;
+      border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+    }
+    .about-floating {
+      position: absolute; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; padding: 0.75rem 1rem;
+      font-size: 0.78rem; font-weight: 600;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .about-floating.left { top: 15%; left: -10%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .about-floating.right { bottom: 15%; right: -10%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    @media (max-width: 700px) {
+      .about-floating { display: none; }
+    }
+    .about-text h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 1.25rem; }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; line-height: 1.75; }
+    .about-list { list-style: none; margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .about-list li {
+      display: flex; align-items: center; gap: 0.75rem;
+      font-size: 0.9rem; color: var(--muted);
+    }
+    .about-list li .chk { color: #10b981; font-weight: 700; }
+
+    /* ─── CTA FINAL ─── */
+    .cta-final {
+      margin: 0 2rem 5rem; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(14,165,233,0.08), rgba(99,102,241,0.12));
+      border: 1px solid rgba(14,165,233,0.2);
+      padding: 5rem 2rem; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-final::before {
+      content: ''; position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(14,165,233,0.08), transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .cta-final > * { position: relative; z-index: 1; }
+    .cta-final h2 {
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 900;
+      letter-spacing: -1.5px; margin-bottom: 1rem;
+    }
+    .cta-final p { color: var(--muted); font-size: 1.1rem; margin-bottom: 2.5rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    footer p { color: var(--muted); font-size: 0.85rem; }
     footer a { color: var(--accent); text-decoration: none; }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--muted); font-size: 0.85rem; text-decoration: none; }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ─── FLOATING WA ─── */
+    .wa-float {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: #25d366;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+      transition: all 0.3s;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37,211,102,0.6); }
+    .wa-float svg { width: 28px; height: 28px; fill: white; }
+    .wa-float::before {
+      content: ''; position: absolute;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: #25d366; animation: waPulse 2s infinite; z-index: -1;
+    }
+    @keyframes waPulse {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
   <!-- NAV -->
   <nav>
-    <div class="logo">Cruz<span>Digital</span></div>
-    <a href="mailto:albiazul1988@gmail.com">albiazul1988@gmail.com</a>
+    <a href="#" class="nav-logo">
+      <div class="dot"></div>
+      Cruz<span style="color:var(--blue)">Digital</span>
+    </a>
+    <div class="nav-links">
+      <a href="#web">Páginas Web</a>
+      <a href="#automatizacion">Automatización</a>
+      <a href="#proceso">Proceso</a>
+      <a href="#sobre-mi">Nosotros</a>
+      <a href="https://wa.me/34622427915?text=Hola%2C%20me%20interesa%20vuestra%20web%20profesional" target="_blank" class="nav-cta">Contactar →</a>
+    </div>
   </nav>
 
   <!-- HERO -->
   <div class="hero">
-    <div class="badge">⚡ Automatización e IA para negocios</div>
-    <h1>Tu negocio en<br /><span>piloto automático</span></h1>
-    <p>Ahorra horas cada semana automatizando tareas repetitivas con Inteligencia Artificial. Más tiempo para lo que realmente importa.</p>
-    <div>
-      <a href="mailto:albiazul1988@gmail.com?subject=Quiero%20automatizar%20mi%20negocio" class="btn-primary">Hablemos →</a>
-      <a href="#servicios" class="btn-secondary">Ver servicios</a>
+    <div class="hero-bg"></div>
+    <div class="grid-lines"></div>
+    <div class="hero-badge reveal">
+      <span class="live"></span>
+      Sistema activo 24/7 — Bot IA + Webs + Automatización
     </div>
-    <div class="stats">
-      <div class="stat">
-        <div class="stat-number">20+</div>
-        <div class="stat-label">Horas ahorradas/semana</div>
+    <h1 class="reveal">
+      Tu negocio<br />
+      <span class="grad-text">siempre activo</span><br />
+      sin esfuerzo
+    </h1>
+    <p class="hero-sub reveal">
+      Páginas web profesionales desde <strong style="color:var(--text)">297€</strong> listas en 48h.
+      Y automatizamos cualquier proceso de tu empresa con Inteligencia Artificial.
+    </p>
+    <div class="hero-actions reveal">
+      <a href="https://wa.me/34622427915?text=Hola%2C%20quiero%20una%20web%20profesional%20para%20mi%20negocio" target="_blank" class="btn-wa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Quiero mi web gratis de demo
+      </a>
+      <a href="#automatizacion" class="btn-outline">Ver automatización ↓</a>
+    </div>
+    <div class="hero-stats reveal">
+      <div class="hstat">
+        <span class="hstat-n">48h</span>
+        <span class="hstat-l">Web lista</span>
       </div>
-      <div class="stat">
-        <div class="stat-number">100%</div>
-        <div class="stat-label">Automatizado</div>
+      <div class="hstat">
+        <span class="hstat-n">297€</span>
+        <span class="hstat-l">Desde</span>
       </div>
-      <div class="stat">
-        <div class="stat-number">24/7</div>
-        <div class="stat-label">Tu negocio trabajando</div>
+      <div class="hstat">
+        <span class="hstat-n">24/7</span>
+        <span class="hstat-l">Bot activo</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-n">100%</span>
+        <span class="hstat-l">Automatizado</span>
       </div>
     </div>
   </div>
 
-  <!-- METODOLOGÍA -->
-  <section id="metodologia">
-    <p class="section-label">Cómo trabajamos</p>
-    <h2 class="section-title">Visita gratuita + informe en 48h</h2>
-    <p class="section-sub">Antes de hablar de tecnología, entendemos tu negocio. En persona.</p>
-    <div class="metodo-grid">
-      <div class="metodo-card">
-        <div class="metodo-num">01</div>
-        <div class="metodo-body">
-          <h3>Te visitamos</h3>
-          <p>Nos reunimos contigo en tu negocio. Analizamos en detalle todos tus procesos, tareas repetitivas y puntos de dolor. Sin coste, sin compromiso.</p>
+  <!-- TECH STRIP -->
+  <div class="tech-strip">
+    <div class="tech-inner">
+      <div class="tech-item"><span>⚡</span> N8N Automation</div>
+      <div class="tech-item"><span>🤖</span> OpenAI GPT-4</div>
+      <div class="tech-item"><span>💬</span> WhatsApp Business</div>
+      <div class="tech-item"><span>💳</span> Stripe Payments</div>
+      <div class="tech-item"><span>📊</span> Google Sheets</div>
+      <div class="tech-item"><span>📧</span> Gmail API</div>
+      <div class="tech-item"><span>🗺️</span> Google Maps</div>
+      <div class="tech-item"><span>🌐</span> GitHub Pages</div>
+      <!-- duplicate for infinite scroll -->
+      <div class="tech-item"><span>⚡</span> N8N Automation</div>
+      <div class="tech-item"><span>🤖</span> OpenAI GPT-4</div>
+      <div class="tech-item"><span>💬</span> WhatsApp Business</div>
+      <div class="tech-item"><span>💳</span> Stripe Payments</div>
+      <div class="tech-item"><span>📊</span> Google Sheets</div>
+      <div class="tech-item"><span>📧</span> Gmail API</div>
+      <div class="tech-item"><span>🗺️</span> Google Maps</div>
+      <div class="tech-item"><span>🌐</span> GitHub Pages</div>
+    </div>
+  </div>
+
+  <!-- WEB PRODUCT -->
+  <div class="web-product" id="web">
+    <div class="web-product-inner">
+      <div class="demo-phone reveal">
+        <div class="phone-glow"></div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen" style="padding-top:2.5rem; gap:0.4rem;">
+            <div class="phone-header">Cruz Digital — Demo Gratuita</div>
+            <div class="phone-web-preview">
+              <div class="web-preview-header">
+                <div class="web-dot" style="background:#ff5f56"></div>
+                <div class="web-dot" style="background:#ffbd2e"></div>
+                <div class="web-dot" style="background:#27c93f"></div>
+              </div>
+              <div class="web-preview-content">
+                <div class="web-preview-line accent"></div>
+                <div class="web-preview-line med"></div>
+                <div class="web-preview-line short"></div>
+                <div style="display:flex;gap:4px;margin-top:6px">
+                  <div style="height:30px;flex:1;background:#f3f4f6;border-radius:4px"></div>
+                  <div style="height:30px;flex:1;background:#0ea5e9;border-radius:4px"></div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.35rem;flex:1;padding:0.25rem 0">
+              <div class="chat-bubble chat-in">Hola! Me interesa una web para mi bar</div>
+              <div class="chat-bubble chat-out">¡Genial! ¿Qué paquete te interesa? 😊</div>
+              <div class="chat-bubble chat-in">El básico, tenemos el bar La Perla</div>
+              <div class="chat-bubble chat-out">Perfecto, ¿cuál es tu email?</div>
+              <div class="chat-bubble chat-in">bar@laperla.es</div>
+              <div class="chat-bubble chat-out" style="background:#10b981">✅ Demo lista: tinyurl.com/tu-web</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="metodo-card">
-        <div class="metodo-num">02</div>
-        <div class="metodo-body">
-          <h3>Informe personalizado en 48h</h3>
-          <p>En menos de 48 horas recibes un informe completo con: qué podemos automatizar en tu negocio, qué problemas resolvemos y una estimación real de ahorro de tiempo y mejora de ingresos.</p>
-        </div>
-      </div>
-      <div class="metodo-card">
-        <div class="metodo-num">03</div>
-        <div class="metodo-body">
-          <h3>Propuesta clara sin sorpresas</h3>
-          <p>El informe incluye el precio de la implementación y el coste mensual posterior. Tú decides si seguimos adelante. Sin letra pequeña.</p>
+      <div class="reveal">
+        <p class="section-label">Páginas Web Profesionales</p>
+        <h2 class="section-title">Tu web lista en<br /><span class="grad-text">48 horas</span></h2>
+        <p class="section-sub" style="margin-bottom:2rem">Webs profesionales para negocios locales en España que todavía no tienen presencia online. Con demo gratuita antes de pagar.</p>
+        <div class="step-flow">
+          <div class="flow-step">
+            <div class="flow-icon blue">💬</div>
+            <div class="flow-body">
+              <h4>Hablas con nuestro bot por WhatsApp</h4>
+              <p>En 2 minutos nos das los datos básicos de tu negocio. Sin formularios, sin llamadas.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon green">🌐</div>
+            <div class="flow-body">
+              <h4>Demo gratuita con tus datos reales</h4>
+              <p>Generamos automáticamente una web de demostración con tu negocio real de Google Maps. Sin coste.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon indigo">💳</div>
+            <div class="flow-body">
+              <h4>Si te gusta, pagas y la activamos</h4>
+              <p>Pago seguro online. En cuanto se confirma, la web se publica con tu dominio propio.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-icon orange">🚀</div>
+            <div class="flow-body">
+              <h4>Web activa en 48h</h4>
+              <p>Dominio, hosting, diseño adaptado a móvil y SEO básico. Todo incluido.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div style="text-align:center; margin-top: 3rem;">
-      <a href="mailto:albiazul1988@gmail.com?subject=Quiero%20la%20visita%20gratuita" class="btn-primary">Solicitar visita gratuita →</a>
+  </div>
+
+  <!-- PRICING -->
+  <section class="section reveal" id="precios">
+    <p class="section-label">Precios</p>
+    <h2 class="section-title">Elige tu paquete</h2>
+    <p class="section-sub">Sin sorpresas. Sin letra pequeña. Precio único, todo incluido.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <p class="price-name">Básica</p>
+        <div class="price-amount">297<span>€</span></div>
+        <p class="price-time">pago único · dominio 1 año incluido</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li><span class="ck">✓</span> 1 página completa (inicio, servicios, contacto)</li>
+          <li><span class="ck">✓</span> Diseño profesional adaptado a tu negocio</li>
+          <li><span class="ck">✓</span> 100% adaptada a móvil</li>
+          <li><span class="ck">✓</span> Formulario de contacto</li>
+          <li><span class="ck">✓</span> Dominio propio incluido 1 año</li>
+          <li><span class="ck">✓</span> Demo gratuita previa</li>
+          <li><span class="ck">✓</span> Lista en 48 horas</li>
+        </ul>
+        <a href="https://wa.me/34622427915?text=Quiero%20el%20paquete%20B%C3%A1sica%20de%20297%E2%82%AC" target="_blank" class="btn-price btn-price-ghost">Quiero esta →</a>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge-top">MÁS POPULAR</span>
+        <p class="price-name">Profesional</p>
+        <div class="price-amount">497<span>€</span></div>
+        <p class="price-time">pago único · dominio 1 año incluido</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li><span class="ck">✓</span> Hasta 5 páginas</li>
+          <li><span class="ck">✓</span> Galería de fotos del negocio</li>
+          <li><span class="ck">✓</span> SEO básico (aparece en Google)</li>
+          <li><span class="ck">✓</span> Google Maps integrado</li>
+          <li><span class="ck">✓</span> Formulario de contacto y reservas</li>
+          <li><span class="ck">✓</span> Dominio propio incluido 1 año</li>
+          <li><span class="ck">✓</span> Demo gratuita previa</li>
+          <li><span class="ck">✓</span> Lista en 72 horas</li>
+        </ul>
+        <a href="https://wa.me/34622427915?text=Quiero%20el%20paquete%20Profesional%20de%20497%E2%82%AC" target="_blank" class="btn-price btn-price-primary">Quiero esta →</a>
+      </div>
+      <div class="price-card">
+        <p class="price-name">Premium</p>
+        <div class="price-amount">797<span>€</span></div>
+        <p class="price-time">pago único · dominio 1 año incluido</p>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li><span class="ck">✓</span> Hasta 10 páginas</li>
+          <li><span class="ck">✓</span> Tienda online O sistema de reservas</li>
+          <li><span class="ck">✓</span> SEO completo</li>
+          <li><span class="ck">✓</span> Blog integrado</li>
+          <li><span class="ck">✓</span> Dominio incluido 1 año</li>
+          <li><span class="ck">✓</span> 3 meses de mantenimiento incluido</li>
+          <li><span class="ck">✓</span> Demo gratuita previa</li>
+          <li><span class="ck">✓</span> Lista en 5 días</li>
+        </ul>
+        <a href="https://wa.me/34622427915?text=Quiero%20el%20paquete%20Premium%20de%20797%E2%82%AC" target="_blank" class="btn-price btn-price-ghost">Quiero esta →</a>
+      </div>
+    </div>
+    <p style="text-align:center; color:var(--muted); font-size:0.85rem; margin-top:2rem;">
+      ¿No sabes cuál elegir? <a href="https://wa.me/34622427915?text=No%20s%C3%A9%20qu%C3%A9%20paquete%20elegir%2C%20%C2%BFme%20ayud%C3%A1is%3F" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:600;">Escríbenos y te asesoramos gratis →</a>
+    </p>
+  </section>
+
+  <!-- SERVICES / AUTOMATION -->
+  <div class="services-section" id="automatizacion">
+    <div class="services-inner">
+      <div class="reveal">
+        <p class="section-label">Automatización con IA</p>
+        <h2 class="section-title">Automatizamos cualquier<br />proceso de tu empresa</h2>
+        <p class="section-sub">Si en tu negocio hay una tarea que se repite, que consume tiempo o que comete errores humanos, la automatizamos. Sin importar el sector ni la complejidad.</p>
+      </div>
+      <div class="services-grid reveal">
+        <div class="svc-card">
+          <div class="svc-icon">🤖</div>
+          <h3>Agentes IA conversacionales</h3>
+          <p>Bots inteligentes que atienden clientes, responden preguntas, cualifican leads y cierran ventas por WhatsApp, web o email — sin intervención humana, las 24h.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon">🎯</div>
+          <h3>Captación automática de leads</h3>
+          <p>Identificamos clientes potenciales en Google Maps, extraemos sus datos y los contactamos con mensajes personalizados por IA. Pipeline de ventas en piloto automático.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon">📧</div>
+          <h3>Email outreach con IA</h3>
+          <p>Campañas de email frío donde cada mensaje está personalizado con IA según el negocio del destinatario. Tasas de respuesta hasta 5x superiores a las campañas genéricas.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon">⚙️</div>
+          <h3>Automatización de procesos internos</h3>
+          <p>Conectamos tu CRM, facturación, calendarios y herramientas existentes. Eliminamos las tareas manuales que consumen horas de tu equipo cada semana.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon">📱</div>
+          <h3>Gestión automática de redes sociales</h3>
+          <p>Generamos, programamos y publicamos contenido en todas tus redes de forma autónoma. Tu presencia digital activa sin dedicarle tiempo.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon">📊</div>
+          <h3>Reporting e inteligencia de negocio</h3>
+          <p>Informes automáticos diarios con las métricas clave de tu negocio. Siempre sabes cómo va tu empresa sin tener que buscar los datos manualmente.</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:3rem;" class="reveal">
+        <a href="https://wa.me/34622427915?text=Quiero%20automatizar%20procesos%20de%20mi%20empresa" target="_blank" class="btn-wa">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Cuéntanos tu proceso →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROCESS -->
+  <section class="section" id="proceso">
+    <div class="reveal">
+      <p class="section-label">Cómo funciona</p>
+      <h2 class="section-title">De cero a web activa<br /><span class="grad-text">en 48 horas</span></h2>
+      <p class="section-sub">Sin reuniones, sin burocracia. Todo el proceso ocurre por WhatsApp y de forma automática.</p>
+    </div>
+    <div class="process-grid reveal">
+      <div class="proc-step">
+        <div class="proc-num">💬</div>
+        <h3>Escríbenos</h3>
+        <p>Mandas un WhatsApp. Nuestro bot IA te guía en 2 minutos para recopilar los datos de tu negocio.</p>
+      </div>
+      <div class="proc-step">
+        <div class="proc-num">🔍</div>
+        <h3>Demo automática</h3>
+        <p>El sistema busca tu negocio en Google Maps y genera una web de demostración con tus datos reales. Gratis.</p>
+      </div>
+      <div class="proc-step">
+        <div class="proc-num">💳</div>
+        <h3>Pagas si te gusta</h3>
+        <p>Ves la demo antes de pagar. Si te convence, pagas online de forma segura con tarjeta.</p>
+      </div>
+      <div class="proc-step">
+        <div class="proc-num">🚀</div>
+        <h3>Web activa</h3>
+        <p>En menos de 48h tu web está publicada en tu dominio propio. Recibes el enlace por email y WhatsApp.</p>
+      </div>
     </div>
   </section>
 
-  <!-- SERVICIOS -->
-  <section id="servicios">
-    <p class="section-label">Servicios</p>
-    <h2 class="section-title">Todo lo que puedo automatizar para ti</h2>
-    <p class="section-sub">Desde captar clientes hasta publicar contenido, cada proceso de tu negocio puede funcionar solo.</p>
-    <div class="services-grid">
-      <div class="card">
-        <div class="card-icon">🤖</div>
-        <h3>Agentes con IA</h3>
-        <p>Desplegamos agentes inteligentes que gestionan consultas, cualifican leads, responden preguntas frecuentes y ejecutan acciones dentro de tus sistemas — sin intervención humana, las 24 horas del día.</p>
+  <!-- NUMBERS -->
+  <div class="numbers-section">
+    <div class="numbers-grid reveal">
+      <div class="num-item">
+        <span class="num-value">48h</span>
+        <span class="num-label">Tiempo medio de entrega</span>
       </div>
-      <div class="card">
-        <div class="card-icon">⚙️</div>
-        <h3>Automatización de procesos</h3>
-        <p>Diseñamos flujos de trabajo que conectan tus herramientas (CRM, email, facturación, calendarios) y eliminan las tareas manuales que consumen el tiempo de tu equipo cada día.</p>
+      <div class="num-item">
+        <span class="num-value">20h</span>
+        <span class="num-label">Ahorradas/semana con automatización</span>
       </div>
-      <div class="card">
-        <div class="card-icon">🎯</div>
-        <h3>Captación automática de leads</h3>
-        <p>Implementamos sistemas que identifican clientes potenciales en tu mercado, extraen sus datos de contacto y los entregan listos para ser abordados — en piloto automático.</p>
+      <div class="num-item">
+        <span class="num-value">24/7</span>
+        <span class="num-label">Bot de ventas activo</span>
       </div>
-      <div class="card">
-        <div class="card-icon">📧</div>
-        <h3>Prospección en frío con IA</h3>
-        <p>Creamos campañas de email outbound donde cada mensaje está personalizado con IA según el negocio del destinatario. Mayor tasa de respuesta, menor tiempo invertido.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">📱</div>
-        <h3>Automatización de redes sociales</h3>
-        <p>Configuramos sistemas que generan, programan y publican contenido en todas tus redes de forma autónoma, manteniendo tu presencia digital activa sin dedicarle tiempo.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🎬</div>
-        <h3>Producción de vídeo con IA</h3>
-        <p>Generamos vídeos cortos de forma automática con IA — guión, locución, montaje y publicación — para que tu marca crezca en redes sin necesidad de cámara ni equipo de producción.</p>
+      <div class="num-item">
+        <span class="num-value">3</span>
+        <span class="num-label">Paquetes para cada necesidad</span>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- CÓMO FUNCIONA -->
-  <section>
-    <p class="section-label">Proceso</p>
-    <h2 class="section-title">Así de sencillo es empezar</h2>
-    <p class="section-sub">En pocos días tu negocio ya estará funcionando en automático.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">01</div>
-        <h3>Hablamos</h3>
-        <p>Me cuentas qué tareas te quitan más tiempo o cuáles haces de forma manual.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">02</div>
-        <h3>Diseño la solución</h3>
-        <p>Creo el flujo automatizado adaptado exactamente a tu negocio y tus herramientas.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">03</div>
-        <h3>Lo activo</h3>
-        <p>Pongo en marcha todo el sistema. Tú solo lo ves funcionar.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">04</div>
-        <h3>Seguimiento</h3>
-        <p>Te acompaño y ajusto lo que sea necesario para que funcione siempre.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SOBRE MÍ -->
-  <section id="sobre-mi">
-    <div class="about-inner">
-      <div>
-        <div class="about-avatar">JC</div>
-        <p class="section-label">Sobre mí</p>
-        <h2 class="section-title">Juan Cruz Bogliotti</h2>
-      </div>
-      <div class="about-text">
-        <p>Especialista en automatización e Inteligencia Artificial aplicada a negocios reales. Ayudo a empresas a dejar de perder tiempo en tareas manuales y a crecer sin necesidad de contratar más personal.</p>
-        <p>Trabajo con las mejores herramientas del mercado para crear sistemas que funcionan solos, adaptados al 100% a cada negocio.</p>
-        <div class="tags">
-          <span class="tag">N8N</span>
-          <span class="tag">OpenAI</span>
-          <span class="tag">Automatización</span>
-          <span class="tag">Agentes IA</span>
-          <span class="tag">Redes Sociales</span>
-          <span class="tag">Lead Generation</span>
+  <!-- ABOUT -->
+  <div class="about-section" id="sobre-mi">
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-floating left">
+          <span>⚡</span> N8N Expert
+        </div>
+        <div class="about-card">
+          <div class="avatar">JC</div>
+          <h3>Juan Cruz Bogliotti</h3>
+          <p class="role">Fundador · Cruz Digital</p>
+          <div class="about-skills">
+            <span class="skill-tag">N8N</span>
+            <span class="skill-tag">OpenAI</span>
+            <span class="skill-tag">WhatsApp API</span>
+            <span class="skill-tag">Stripe</span>
+            <span class="skill-tag">Google Maps</span>
+            <span class="skill-tag">GitHub</span>
+          </div>
+        </div>
+        <div class="about-floating right">
+          <span>🤖</span> IA Aplicada
         </div>
       </div>
+      <div class="about-text reveal">
+        <h2>Hacemos que la tecnología <span class="grad-text">trabaje para ti</span></h2>
+        <p>En Cruz Digital combinamos diseño web profesional con automatización inteligente. Nuestro objetivo es simple: que tu negocio consiga más clientes y opere mejor, sin que tengas que invertir más tiempo.</p>
+        <p>Usamos las herramientas más avanzadas del mercado — IA, bots de WhatsApp, automatización de procesos — para crear sistemas que funcionan solos, 24 horas al día, 7 días a la semana.</p>
+        <ul class="about-list">
+          <li><span class="chk">✓</span> Webs profesionales con demo gratuita antes de pagar</li>
+          <li><span class="chk">✓</span> Automatización de cualquier proceso empresarial</li>
+          <li><span class="chk">✓</span> Bots IA para WhatsApp, email y web</li>
+          <li><span class="chk">✓</span> Sistemas de captación automática de clientes</li>
+          <li><span class="chk">✓</span> Soporte y mantenimiento continuo</li>
+        </ul>
+      </div>
     </div>
-  </section>
+  </div>
 
   <!-- CTA FINAL -->
-  <div class="cta-section">
-    <h2>¿Listo para automatizar tu negocio?</h2>
-    <p>Escríbeme y en 24h te digo exactamente qué podemos automatizar en tu caso.</p>
-    <a href="mailto:albiazul1988@gmail.com?subject=Quiero%20automatizar%20mi%20negocio" class="btn-primary">
-      Contáctame ahora →
-    </a>
+  <div class="cta-final reveal">
+    <p class="section-label" style="margin-bottom:1rem">¿Hablamos?</p>
+    <h2>Empieza hoy.<br /><span class="grad-text">Sin compromiso.</span></h2>
+    <p>Tu demo de web es gratis. Y si quieres automatizar algo, cuéntanos el problema y te decimos si podemos resolverlo — sin coste.</p>
+    <div class="cta-actions">
+      <a href="https://wa.me/34622427915?text=Hola%2C%20quiero%20empezar%20con%20Cruz%20Digital" target="_blank" class="btn-wa">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Escríbenos por WhatsApp
+      </a>
+      <a href="mailto:albiazul1988@gmail.com?subject=Contacto%20Cruz%20Digital" class="btn-outline">
+        📧 albiazul1988@gmail.com
+      </a>
+    </div>
   </div>
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 Cruz Digital · <a href="mailto:albiazul1988@gmail.com">albiazul1988@gmail.com</a></p>
+    <p>© 2026 <strong style="color:var(--text)">Cruz Digital</strong> · Todos los derechos reservados</p>
+    <div class="footer-links">
+      <a href="#web">Webs</a>
+      <a href="#automatizacion">Automatización</a>
+      <a href="#sobre-mi">Nosotros</a>
+      <a href="mailto:albiazul1988@gmail.com">Contacto</a>
+    </div>
   </footer>
+
+  <!-- FLOATING WHATSAPP -->
+  <a href="https://wa.me/34622427915?text=Hola%2C%20me%20interesa%20Cruz%20Digital" target="_blank" class="wa-float" title="Escríbenos por WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) {
+          el.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.style.background = 'rgba(6,11,23,0.95)';
+      } else {
+        nav.style.background = 'rgba(6,11,23,0.8)';
+      }
+    });
+  </script>
 
 </body>
 </html>
