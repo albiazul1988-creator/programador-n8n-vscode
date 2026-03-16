@@ -114,6 +114,23 @@
     .servicio-card h3 { font-size: 1.15rem; font-weight: 700; color: {{COLOR_PRIMARY}}; margin-bottom: 10px; }
     .servicio-card p { color: #555; font-size: 0.95rem; line-height: 1.65; }
 
+    /* RATING */
+    .rating-section { background: {{COLOR_PRIMARY}}; padding: 56px 24px; }
+    .rating-inner { max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 48px; }
+    .rating-big-num { font-size: 5rem; font-weight: 900; color: #fff; line-height: 1; }
+    .rating-detail { color: #fff; }
+    .rating-stars-row { color: #ffd700; font-size: 1.8rem; letter-spacing: 4px; margin-bottom: 8px; }
+    .rating-text { opacity: 0.85; font-size: 1rem; }
+
+    /* MAPA BÁSICA */
+    .mapa-section { padding: 0 24px 80px; }
+    .mapa-wrap {
+      max-width: 1100px; margin: 0 auto;
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.1); height: 380px;
+    }
+    .mapa-wrap iframe { width: 100%; height: 100%; border: none; }
+
     /* CONTACTO */
     .contacto { background: #f7f8fa; }
     .contacto-card {
@@ -187,6 +204,24 @@
     </div>
   </div>
 </section>
+
+<!-- RATING GOOGLE -->
+<section class="rating-section">
+  <div class="rating-inner">
+    <div class="rating-big-num">{{RATING}}</div>
+    <div class="rating-detail">
+      <div class="rating-stars-row">★★★★★</div>
+      <div class="rating-text">{{TOTAL_REVIEWS}} opiniones verificadas en Google</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<div class="mapa-section">
+  <div class="mapa-wrap">
+    <iframe src="{{MAPS_EMBED}}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación {{NOMBRE_NEGOCIO}}"></iframe>
+  </div>
+</div>
 
 <!-- CONTACTO -->
 <section class="section contacto" id="contacto">
