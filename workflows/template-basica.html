@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NOMBRE_NEGOCIO}} | {{CIUDAD}}</title>
+  <meta name="description" content="{{DESCRIPCION}} Llámanos al {{TELEFONO}}. Estamos en {{CIUDAD}}.">
+  <meta name="robots" content="index, follow">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #222; line-height: 1.65; background: #fff; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(145deg, {{COLOR_PRIMARY}} 0%, {{COLOR_SECONDARY}} 100%);
+      color: #fff;
+      padding: 100px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0; right: 0;
+      height: 60px;
+      background: #fff;
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #fff;
+      padding: 6px 20px;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      opacity: 0.92;
+      max-width: 560px;
+      margin: 0 auto 44px;
+    }
+    .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; color: {{COLOR_PRIMARY}};
+      padding: 16px 36px; border-radius: 50px;
+      font-size: 1.05rem; font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,0.22); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: #fff;
+      border: 2px solid rgba(255,255,255,0.65);
+      padding: 14px 30px; border-radius: 50px;
+      font-size: 1rem; font-weight: 600;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.15); }
+
+    /* SERVICIOS */
+    .section { padding: 90px 24px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block;
+      color: {{COLOR_PRIMARY}};
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      color: #111;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .section-subtitle { color: #666; margin-bottom: 56px; font-size: 1.05rem; }
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+    }
+    .servicio-card {
+      background: #fff;
+      border: 1px solid #efefef;
+      border-radius: 20px;
+      padding: 36px 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .servicio-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,0,0,0.1); }
+    .servicio-card .icon { font-size: 2.8rem; display: block; margin-bottom: 18px; }
+    .servicio-card h3 { font-size: 1.15rem; font-weight: 700; color: {{COLOR_PRIMARY}}; margin-bottom: 10px; }
+    .servicio-card p { color: #555; font-size: 0.95rem; line-height: 1.65; }
+
+    /* CONTACTO */
+    .contacto { background: #f7f8fa; }
+    .contacto-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 60px 48px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.07);
+      text-align: center;
+      max-width: 660px;
+      margin: 0 auto;
+    }
+    .contacto-icon { font-size: 3.6rem; margin-bottom: 20px; }
+    .contacto-card h2 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; color: #111; }
+    .contacto-card > p { color: #666; margin-bottom: 36px; font-size: 1.05rem; }
+    .info-list { list-style: none; margin-bottom: 40px; text-align: left; }
+    .info-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid #f0f0f0;
+      font-size: 0.97rem; color: #444;
+    }
+    .info-list li:last-child { border-bottom: none; }
+    .info-list .lbl { font-weight: 700; color: #222; min-width: 90px; flex-shrink: 0; }
+    .btn-llamar {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: {{COLOR_PRIMARY}}; color: #fff;
+      padding: 18px 48px; border-radius: 50px;
+      font-size: 1.1rem; font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+    }
+    .btn-llamar:hover { transform: translateY(-2px); }
+
+    /* FOOTER */
+    footer {
+      background: #111; color: #888;
+      padding: 40px 24px; text-align: center; font-size: 0.85rem;
+    }
+    footer strong { color: #ddd; }
+    footer a { color: {{COLOR_PRIMARY}}; text-decoration: none; }
+    footer .sep { margin: 0 8px; }
+
+    @media (max-width: 640px) {
+      .section { padding: 64px 16px; }
+      .contacto-card { padding: 40px 24px; }
+      .hero { padding: 80px 20px 70px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-badge">{{CIUDAD}}</div>
+  <h1>{{NOMBRE_NEGOCIO}}</h1>
+  <p>{{DESCRIPCION}}</p>
+  <div class="hero-ctas">
+    <a href="tel:{{TELEFONO}}" class="btn-white">📞 Llamar ahora</a>
+    <a href="#servicios" class="btn-outline">Ver servicios ↓</a>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="section" id="servicios">
+  <div class="section-inner">
+    <span class="section-tag">Lo que hacemos</span>
+    <h2 class="section-title">Nuestros servicios</h2>
+    <p class="section-subtitle">Calidad y profesionalidad en cada trabajo</p>
+    <div class="servicios-grid">
+      {{SERVICIOS_HTML}}
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="section contacto" id="contacto">
+  <div class="section-inner">
+    <div class="contacto-card">
+      <div class="contacto-icon">📍</div>
+      <h2>Visítanos o llámanos</h2>
+      <p>Estamos en {{CIUDAD}}. Estaremos encantados de atenderte.</p>
+      <ul class="info-list">
+        <li><span class="lbl">📍 Dirección</span><span>{{DIRECCION}}</span></li>
+        <li><span class="lbl">📞 Teléfono</span><span>{{TELEFONO}}</span></li>
+        <li><span class="lbl">🕐 Horario</span><span style="white-space:pre-line">{{HORARIOS}}</span></li>
+      </ul>
+      <a href="tel:{{TELEFONO}}" class="btn-llamar">📞 Llamar ahora</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>{{NOMBRE_NEGOCIO}}</strong><span class="sep">·</span>{{CIUDAD}}</p>
+  <p style="margin-top:10px">Web profesional por <a href="#">Cruz Digital</a><span class="sep">·</span>© 2026</p>
+</footer>
+
+</body>
+</html>

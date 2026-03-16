@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{NOMBRE_NEGOCIO}} | {{CIUDAD}}</title>
+  <meta name="description" content="{{DESCRIPCION}} ☎ {{TELEFONO}} · {{DIRECCION}}">
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{NOMBRE_NEGOCIO}} — {{CIUDAD}}">
+  <meta property="og:description" content="{{DESCRIPCION}}">
+  <meta property="og:image" content="{{FOTO_1}}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"LocalBusiness","name":"{{NOMBRE_NEGOCIO}}","description":"{{DESCRIPCION}}","telephone":"{{TELEFONO}}","address":{"@type":"PostalAddress","streetAddress":"{{DIRECCION}}","addressLocality":"{{CIUDAD}}","addressCountry":"ES"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"{{RATING}}","reviewCount":"{{TOTAL_REVIEWS}}"},"image":"{{FOTO_1}}"}
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #222; line-height: 1.65; background: #fff; }
+
+    /* NAVBAR */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #f0f0f0;
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo { font-weight: 800; font-size: 1.1rem; color: {{COLOR_PRIMARY}}; text-decoration: none; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { text-decoration: none; color: #444; font-size: 0.92rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: {{COLOR_PRIMARY}}; }
+    .nav-cta {
+      background: {{COLOR_PRIMARY}}; color: #fff !important;
+      padding: 9px 22px; border-radius: 50px; font-weight: 700 !important;
+    }
+    @media (max-width: 640px) { .nav-links { display: none; } }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(145deg, {{COLOR_PRIMARY}} 0%, {{COLOR_SECONDARY}} 100%);
+      color: #fff;
+      padding: 110px 24px 100px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 70px; background: #fff;
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-rating {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px 20px; border-radius: 50px;
+      font-size: 0.9rem; font-weight: 700; margin-bottom: 24px;
+    }
+    .stars { color: #ffd700; letter-spacing: 2px; }
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 20px; letter-spacing: -0.02em;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.2rem); opacity: 0.92;
+      max-width: 620px; margin: 0 auto 48px;
+    }
+    .hero-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; color: {{COLOR_PRIMARY}};
+      padding: 17px 38px; border-radius: 50px;
+      font-size: 1.05rem; font-weight: 700; text-decoration: none;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.22); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: #fff;
+      border: 2px solid rgba(255,255,255,0.65);
+      padding: 15px 30px; border-radius: 50px;
+      font-size: 1rem; font-weight: 600; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.15); }
+
+    /* SECTIONS */
+    .section { padding: 90px 24px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; color: {{COLOR_PRIMARY}};
+      font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800; color: #111; margin-bottom: 12px; letter-spacing: -0.02em;
+    }
+    .section-subtitle { color: #666; margin-bottom: 56px; font-size: 1.05rem; }
+
+    /* ABOUT */
+    .about { background: #f7f8fa; }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .about-img {
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.12); aspect-ratio: 4/3;
+    }
+    .about-img img { width: 100%; height: 100%; object-fit: cover; }
+    .about-text .section-title { margin-bottom: 20px; }
+    .about-text p { color: #555; font-size: 1.02rem; margin-bottom: 16px; }
+    .about-stats { display: flex; gap: 32px; margin-top: 32px; }
+    .stat { text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 800; color: {{COLOR_PRIMARY}}; display: block; }
+    .stat-lbl { font-size: 0.85rem; color: #888; }
+    @media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; } }
+
+    /* SERVICIOS */
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+    .servicio-card {
+      background: #fff; border: 1px solid #efefef;
+      border-radius: 20px; padding: 36px 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .servicio-card:hover { transform: translateY(-5px); box-shadow: 0 14px 40px rgba(0,0,0,0.1); }
+    .servicio-card .icon { font-size: 2.8rem; display: block; margin-bottom: 18px; }
+    .servicio-card h3 { font-size: 1.15rem; font-weight: 700; color: {{COLOR_PRIMARY}}; margin-bottom: 10px; }
+    .servicio-card p { color: #555; font-size: 0.95rem; line-height: 1.68; }
+
+    /* GALERÍA */
+    .galeria { background: #f7f8fa; }
+    .galeria-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 12px;
+    }
+    .galeria-grid .foto {
+      border-radius: 14px; overflow: hidden;
+      aspect-ratio: 4/3; background: #e0e0e0;
+    }
+    .galeria-grid .foto:first-child { grid-column: span 2; aspect-ratio: 16/9; }
+    .galeria-grid .foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .galeria-grid .foto:hover img { transform: scale(1.04); }
+    @media (max-width: 640px) {
+      .galeria-grid { grid-template-columns: 1fr 1fr; }
+      .galeria-grid .foto:first-child { grid-column: span 2; }
+    }
+
+    /* MAPA */
+    .mapa-section { padding: 0 24px 90px; }
+    .mapa-wrap {
+      max-width: 1100px; margin: 0 auto;
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.1); height: 400px;
+    }
+    .mapa-wrap iframe { width: 100%; height: 100%; border: none; }
+
+    /* CONTACTO */
+    .contacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .info-list { list-style: none; margin-bottom: 40px; }
+    .info-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 0; border-bottom: 1px solid #f0f0f0;
+      font-size: 0.97rem; color: #444;
+    }
+    .info-list li:last-child { border-bottom: none; }
+    .info-list .lbl { font-weight: 700; color: #222; min-width: 100px; flex-shrink: 0; }
+    .btn-llamar {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: {{COLOR_PRIMARY}}; color: #fff;
+      padding: 18px 44px; border-radius: 50px;
+      font-size: 1.05rem; font-weight: 700; text-decoration: none;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+    }
+    .btn-llamar:hover { transform: translateY(-2px); }
+    .rating-card {
+      background: {{COLOR_PRIMARY}}; color: #fff;
+      border-radius: 20px; padding: 32px;
+      text-align: center; margin-top: 32px;
+    }
+    .rating-big { font-size: 3.5rem; font-weight: 800; display: block; }
+    .rating-stars { color: #ffd700; font-size: 1.4rem; letter-spacing: 4px; margin: 8px 0; display: block; }
+    .rating-sub { opacity: 0.85; font-size: 0.95rem; }
+    @media (max-width: 768px) { .contacto-grid { grid-template-columns: 1fr; } }
+
+    /* FLOATING WHATSAPP */
+    .wa-float {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      background: #25d366; color: #fff;
+      width: 60px; height: 60px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; text-decoration: none;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .wa-float:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(37,211,102,0.55); }
+
+    /* FOOTER */
+    footer {
+      background: #111; color: #777;
+      padding: 48px 24px; text-align: center; font-size: 0.85rem;
+    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .footer-name { color: #fff; font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+    .footer-info { margin-bottom: 24px; }
+    footer a { color: {{COLOR_PRIMARY}}; text-decoration: none; }
+    .footer-sep { margin: 0 10px; }
+    .footer-bottom { border-top: 1px solid #222; padding-top: 24px; margin-top: 24px; }
+
+    @media (max-width: 640px) {
+      .section { padding: 64px 16px; }
+      .mapa-section { padding: 0 16px 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#inicio" class="nav-logo">{{NOMBRE_NEGOCIO}}</a>
+    <ul class="nav-links">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="tel:{{TELEFONO}}" class="nav-cta">📞 Llamar</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-rating">
+    <span class="stars">★★★★★</span>
+    <span>{{RATING}} · {{TOTAL_REVIEWS}} opiniones en Google</span>
+  </div>
+  <h1>{{NOMBRE_NEGOCIO}}</h1>
+  <p>{{DESCRIPCION}}</p>
+  <div class="hero-ctas">
+    <a href="tel:{{TELEFONO}}" class="btn-white">📞 Llamar ahora</a>
+    <a href="#galeria" class="btn-outline">Ver galería ↓</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section about" id="nosotros">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-img">
+        <img src="{{FOTO_1}}" alt="{{NOMBRE_NEGOCIO}}" loading="lazy">
+      </div>
+      <div class="about-text">
+        <span class="section-tag">Quiénes somos</span>
+        <h2 class="section-title">Tu negocio de confianza en {{CIUDAD}}</h2>
+        <p>{{DESCRIPCION}}</p>
+        <p>Nos enorgullece ofrecer un servicio de calidad con atención personalizada. Cada cliente es único y lo tratamos como se merece.</p>
+        <div class="about-stats">
+          <div class="stat">
+            <span class="stat-num">{{RATING}}</span>
+            <span class="stat-lbl">Valoración Google</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">{{TOTAL_REVIEWS}}</span>
+            <span class="stat-lbl">Opiniones</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="section" id="servicios">
+  <div class="section-inner">
+    <span class="section-tag">Lo que ofrecemos</span>
+    <h2 class="section-title">Nuestros servicios</h2>
+    <p class="section-subtitle">Profesionalidad y calidad en cada trabajo que realizamos</p>
+    <div class="servicios-grid">
+      {{SERVICIOS_HTML}}
+    </div>
+  </div>
+</section>
+
+<!-- GALERÍA -->
+<section class="section galeria" id="galeria">
+  <div class="section-inner">
+    <span class="section-tag">Nuestro espacio</span>
+    <h2 class="section-title">Galería de fotos</h2>
+    <p class="section-subtitle">Conoce nuestras instalaciones</p>
+    <div class="galeria-grid">
+      <div class="foto"><img src="{{FOTO_1}}" alt="{{NOMBRE_NEGOCIO}}" loading="lazy"></div>
+      <div class="foto"><img src="{{FOTO_2}}" alt="{{NOMBRE_NEGOCIO}}" loading="lazy"></div>
+      <div class="foto"><img src="{{FOTO_3}}" alt="{{NOMBRE_NEGOCIO}}" loading="lazy"></div>
+      <div class="foto"><img src="{{FOTO_4}}" alt="{{NOMBRE_NEGOCIO}}" loading="lazy"></div>
+      <div class="foto"><img src="{{FOTO_5}}" alt="{{NOMBRE_NEGOCIO}}" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<div class="mapa-section">
+  <div class="mapa-wrap">
+    <iframe src="{{MAPS_EMBED}}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación {{NOMBRE_NEGOCIO}}"></iframe>
+  </div>
+</div>
+
+<!-- CONTACTO -->
+<section class="section" id="contacto">
+  <div class="section-inner">
+    <span class="section-tag">Estamos aquí</span>
+    <h2 class="section-title">Contacto y ubicación</h2>
+    <p class="section-subtitle">Llámanos o pásate a vernos, estaremos encantados de atenderte</p>
+    <div class="contacto-grid">
+      <div>
+        <ul class="info-list">
+          <li><span class="lbl">📍 Dirección</span><span>{{DIRECCION}}</span></li>
+          <li><span class="lbl">📞 Teléfono</span><span>{{TELEFONO}}</span></li>
+          <li><span class="lbl">🕐 Horario</span><span style="white-space:pre-line">{{HORARIOS}}</span></li>
+        </ul>
+        <a href="tel:{{TELEFONO}}" class="btn-llamar">📞 Llamar ahora</a>
+      </div>
+      <div>
+        <div class="rating-card">
+          <span class="rating-big">{{RATING}}</span>
+          <span class="rating-stars">★★★★★</span>
+          <p class="rating-sub">{{TOTAL_REVIEWS}} opiniones verificadas en Google</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-name">{{NOMBRE_NEGOCIO}}</div>
+    <div class="footer-info">{{DIRECCION}}<span class="footer-sep">·</span>{{CIUDAD}}</div>
+    <div class="footer-bottom">
+      <p>Web profesional por <a href="#">Cruz Digital</a><span class="footer-sep">·</span>© 2026</p>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOTANTE -->
+<a href="https://wa.me/{{WHATSAPP}}" class="wa-float" target="_blank" rel="noopener" title="WhatsApp">💬</a>
+
+</body>
+</html>
